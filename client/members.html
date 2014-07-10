@@ -1,0 +1,22 @@
+<template name="members">
+  {{> navigationStack}}
+</template>
+
+<template name="membersContent">
+  <a href="{{pathFor 'members' id=2}}">Go to show</a> 
+</template>
+
+<template name="membersShow">
+  show {{id}}
+</template>
+
+
+<template name="groups">
+  {{> navigationStack}}
+</template>
+
+<template name="groupsContent">
+  <a href="{{pathFor 'members'}}">Go to members</a>   
+</template>
+
+

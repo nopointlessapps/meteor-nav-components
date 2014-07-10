@@ -7,6 +7,11 @@ class NavigationStack {
     this._navigationDeps = new Deps.Dependency();
   }
 
+  setStack(newStack=[]){
+    this._navigationStack = newStack.slice(); //clone array
+    this._navigationDeps.changed();
+  }
+
   push(navigationItem){
     this._navigationStack.push(navigationItem);
     navigationItem.setNavigationStack(this);
@@ -29,30 +34,36 @@ class NavigationStack {
         topItem = this.getTopNavigationItem(),
         container = null,
         renderedTemplateToPush = null;
-
+    
     if( topItem ){
       container = template.find(".container");
       $(template.find(".container > .navigation-item")).remove();      
-      
       renderedTemplateToPush = topItem.render();
-
-      renderedTemplateToPush.templateInstance.navigationStack = this;    
-
       UI.insert(renderedTemplateToPush, template.find(".container"));
+
+      console.log(this._navigationStack);
     }
+   
   }
 }
 
 
 Template.navigationStack.created = function(){
   this._navigationStack = new NavigationStack();
-  this._navigationStack.push(new NavigationItem(Template.hello));
 };
 
 Template.navigationStack.rendered = function(){
-  var template = this;
+  var that = this;
   Deps.autorun(function(){
-    template._navigationStack.renderStack(template);
+    var routerData = Router.current().data()
+    if( routerData ){
+      var renderStack = routerData.navigationStackTemplates.map((t) => {
+        return new NavigationItem(t);
+      });
+
+      that._navigationStack.setStack( renderStack )
+      that._navigationStack.renderStack(that);
+    }
   });
 };
 

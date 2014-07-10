@@ -17,14 +17,11 @@ if (Meteor.isClient) {
     }
   });
 
-
-  Router.map(function(){
-    this.route('navigationStack', {
-      path: '/:view?/:id?/:subview?/:subid?/:subsubview?/:subsubid?',
-           
-    });
-
+  Router.configure({
+    layoutTemplate: 'layout'
   });
+
+  
 
 }
 
