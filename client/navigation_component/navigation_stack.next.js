@@ -8,7 +8,14 @@ class NavigationStack {
   }
 
   setStack(newStack=[]){
+    var that = this;
+    
     this._navigationStack = newStack.slice(); //clone array
+
+    this._navigationStack.forEach(function(item){
+      item.setNavigationStack(that);
+    });
+
     this._navigationDeps.changed();
   }
 
@@ -22,11 +29,12 @@ class NavigationStack {
     var navigationItem = this._navigationStack.pop();
     navigationItem.setNavigationStack(null);    
     this._navigationDeps.changed();
+    IronLocation.pushState ({}, "", this.getTopNavigationItem().getPath(), true);
   }
 
   getTopNavigationItem(){
     this._navigationDeps.depend();
-    return this._navigationStack[this._navigationStack.length-1];
+    return this._navigationStack[this._navigationStack.length-1] || null;
   }
 
   renderStack(template){
@@ -45,6 +53,10 @@ class NavigationStack {
     }
    
   }
+
+  getSize(){
+    return this._navigationStack.length;
+  }
 }
 
 
@@ -53,6 +65,7 @@ Template.navigationStack.created = function(){
 };
 
 Template.navigationStack.rendered = function(){
+  
   var that = this;
   Deps.autorun(function(){
     var routerData = Router.current().data()
@@ -62,12 +75,41 @@ Template.navigationStack.rendered = function(){
       });
 
       that._navigationStack.setStack( renderStack )
-      that._navigationStack.renderStack(that);
     }
   });
+ 
 };
 
 Template.navigationStack.helpers({
+  topNavigationItemTemplate: function(){
+    var instance = UI._templateInstance();
+    if( instance && instance._navigationStack ){
+      var topItem = instance._navigationStack.getTopNavigationItem();
+      //return topItem && topItem.getItemTemplate() && UI.render(topItem.getItemTemplate()) || null;
+      return topItem && topItem.getItemTemplate() || null;
+    }
+    return null;
+  },
+
+  navigationStack: function(){
+    var instance = UI._templateInstance();
+    return instance && instance._navigationStack;    
+  },
+
+  topItemData: function(){
+    return {name: 'Jakob Dam Jensne'};
+  },
+
+  topNavigationItem: function(){
+    var instance = UI._templateInstance();
+    if( instance && instance._navigationStack ){
+      var topItem = instance._navigationStack.getTopNavigationItem();
+      return topItem && topItem || null;
+    }
+    return null;
+  }
+
+  
 });
 
 Template.navigationStack.events({

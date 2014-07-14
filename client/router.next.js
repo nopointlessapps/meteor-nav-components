@@ -6,11 +6,13 @@ Router.map(function(){
     template: 'members',
 
     data: function(){
-      var navigationStack = [Template.membersContent];
+      var generateNavItem = function(template, path){
+            return {template, path};
+          },
+          navigationStack = [ generateNavItem( Template.membersContent, Router.path("members") ) ];
     
       if( this.params.id !== undefined ){
-        debugger
-        navigationStack.push(Template.membersShow); 
+        navigationStack.push(generateNavItem( Template.membersShow, Router.path("members", {id: this.params.id}) )); 
       }
 
       return {navigationStackTemplates: navigationStack};
@@ -23,7 +25,7 @@ Router.map(function(){
     data: function(){
       return {
         navigationStackTemplates: [
-          Template.groupsContent
+          {template: Template.groupsContent}
         ]
       };
     }

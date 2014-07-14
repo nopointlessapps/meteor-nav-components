@@ -1,6 +1,10 @@
 {
   "packages": {
     "harmony": {},
-    "iron-router": {}
+    "iron-router": {
+      "git": "https://github.com/EventedMind/iron-router.git",
+      "branch": "feature/iron-layout"
+    
+    }
   }
 }

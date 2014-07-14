@@ -1,7 +1,10 @@
 <template name="navigationItem">
   <div class="navigation-item">
     <div class="navigation-item__action-bar">
-      <a href="">back</a><h2>{{template.title}}</h2>
+      {{#if backButtonVisible}}
+        <a href="" class="navigation-item__action-bar-back-button">back</a>
+      {{/if}}
+      <h2>{{title}}</h2>
     </div>
     <div class="navigation-item__content">
       {{> template}}
