@@ -45,10 +45,6 @@ class NavigationItem {
   }
 }
 
-Template.navigationItem.rendered = function(){
-  console.log(this);
-};
-
 Template.navigationItem.helpers({
   
   backButtonVisible: function(){

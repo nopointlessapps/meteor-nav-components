@@ -65,12 +65,11 @@ Template.navigationStack.created = function(){
 };
 
 Template.navigationStack.rendered = function(){
-  
   var that = this;
   Deps.autorun(function(){
     var routerData = Router.current().data()
     if( routerData ){
-      var renderStack = routerData.navigationStackTemplates.map((t) => {
+      var renderStack = routerData.navigationStack.map((t) => {
         return new NavigationItem(t);
       });
 
