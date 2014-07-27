@@ -1,0 +1,17 @@
+<template name="navigationItem">
+  <div class="navigation-item">
+    <div class="navigation-item-action-bar">
+      <div class="navigation-item-action-bar__actions">
+      {{#if backButtonVisible}}
+        <a href="" class="navigation-item-action-bar__back-button">back</a>
+      {{/if}}
+    </div>
+      <h2 class="navigation-item-action-bar__title">{{title}}</h2>
+      <div class="navigation-item-action-bar__actions"></div>
+            
+    </div>
+    <div class="navigation-item__content">
+      {{> template}}
+    </div>
+  </div>
+</template>

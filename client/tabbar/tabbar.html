@@ -1,0 +1,11 @@
+<template name="tabbar">
+  
+  <div class="tabbar__content-container">
+    {{> selectedItemTemplate}}
+  </div>
+  <ul class="tabbar__items">
+    {{#each tabbarItems}}
+      {{> tabbarItem tabbarItem=this}}
+    {{/each}}
+  </ul>
+</template>
