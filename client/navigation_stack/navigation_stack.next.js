@@ -26,10 +26,14 @@ class NavigationStack {
   }
 
   pop(){
-    var navigationItem = this._navigationStack.pop();
-    navigationItem.setNavigationStack(null);    
+    var navigationItem = this._navigationStack.pop(),
+        newTopItem = this.getTopNavigationItem();
+    navigationItem.setNavigationStack(null);
+
+    IronLocation.pushState({}, "", newTopItem.getPath());    
     this._navigationDeps.changed();
-    IronLocation.pushState ({}, "", this.getTopNavigationItem().getPath(), true);
+
+    console.log("popped to "+ newTopItem.getPath() );
   }
 
   getTopNavigationItem(){
@@ -96,7 +100,7 @@ Template.navigationStack.helpers({
   },
 
   topItemData: function(){
-    return {name: 'Jakob Dam Jensne'};
+    return Router.current().data().data;
   },
 
   topNavigationItem: function(){
@@ -114,3 +118,5 @@ Template.navigationStack.helpers({
 Template.navigationStack.events({
 
 });
+
+export var NavigationStack;

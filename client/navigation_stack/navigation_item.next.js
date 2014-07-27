@@ -6,6 +6,10 @@ class NavigationItem {
     this._template = options.template;
     this._path = options.path;
     this._renderDeps = new Deps.Dependency();
+
+    if( this._path === undefined || this._path === null ){
+      console.error("NavigationItem requires a path");
+    }
   }
 
   getPath(){
@@ -68,7 +72,7 @@ Template.navigationItem.helpers({
   template: function(){
     var instance = UI._templateInstance(),
         navigationItem = instance.data.navigationItem;
-      
+    
     return navigationItem && navigationItem.getTemplate() || null;
   }
 
@@ -76,7 +80,7 @@ Template.navigationItem.helpers({
 
 Template.navigationItem.events({
 
-  "click .navigation-item__action-bar-back-button": function(e, template){
+  "click .navigation-item-action-bar__back-button": function(e, template){
     e.preventDefault();
     e.stopPropagation();
     
@@ -85,6 +89,5 @@ Template.navigationItem.events({
   }
 
 });
-
 
 export var NavigationItem;

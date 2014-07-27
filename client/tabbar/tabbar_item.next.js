@@ -1,8 +1,9 @@
 class TabbarItem {
-  constructor(name, template, path){
+  constructor(name, template, routeName, routeParams){
     this._name = name;
     this._template = template;
-    this._path = path;
+    this._routeName = routeName;
+    this._routeParams = routeParams;
   }
 
   getName(){
@@ -32,7 +33,7 @@ class TabbarItem {
   }
 
   getPath(){
-    return this._path;
+    return Router.path(this._routeName, this._routeParams);
   }
 }
 
@@ -46,7 +47,7 @@ Template.tabbarItem.helpers({
     var instance = UI._templateInstance(),
         item = instance.data.tabbarItem;
 
-    return item.isSelected() && 'selected' || '';
+    return item.isSelected() && 'tabbar-item--selected' || '';
   }
 });
 
