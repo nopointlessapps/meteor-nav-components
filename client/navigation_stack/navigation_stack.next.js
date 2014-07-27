@@ -70,17 +70,23 @@ Template.navigationStack.created = function(){
 
 Template.navigationStack.rendered = function(){
   var that = this;
-  Deps.autorun(function(){
-    var routerData = Router.current().data()
-    if( routerData ){
-      var renderStack = routerData.navigationStack.map((t) => {
-        return new NavigationItem(t);
-      });
 
-      that._navigationStack.setStack( renderStack )
+  Deps.autorun(function(){
+    var navigationStackFn = Router.current().route.navigationStack,
+        navigationStack = [];
+
+    if( typeof navigationStackFn === 'function' ){
+      navigationStack = navigationStackFn();
+      if( navigationStack && navigationStack.length > 0 ){
+        var renderStack = navigationStack.map((t) => {
+          return new NavigationItem(t);
+        });
+
+        that._navigationStack.setStack( renderStack )
+      }
     }
   });
- 
+
 };
 
 Template.navigationStack.helpers({
@@ -100,7 +106,7 @@ Template.navigationStack.helpers({
   },
 
   topItemData: function(){
-    return Router.current().data().data;
+    return Router.current().data();
   },
 
   topNavigationItem: function(){
@@ -112,7 +118,7 @@ Template.navigationStack.helpers({
     return null;
   }
 
-  
+
 });
 
 Template.navigationStack.events({

@@ -66,7 +66,7 @@ Template.navigationItem.helpers({
         navigationItem = instance.data.navigationItem,
         template = navigationItem && navigationItem.getTemplate(); 
         
-    return template && template.title() || null;
+    return template && typeof template.title === 'function' && template.title() || null;
   },
 
   template: function(){
@@ -74,7 +74,7 @@ Template.navigationItem.helpers({
         navigationItem = instance.data.navigationItem;
     
     return navigationItem && navigationItem.getTemplate() || null;
-  }
+  },
 
 });
 
