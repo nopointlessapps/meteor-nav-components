@@ -1,3 +1,6 @@
 <template name="tabbarItem">
-  <li class="tabbar-item {{selectedClass}}">{{name}}</li>   
+  <li class="tabbar-item {{selectedClass}}">
+    {{>icon name=iconName}}
+    <div>{{name}}</div>
+  </li>   
 </template>
