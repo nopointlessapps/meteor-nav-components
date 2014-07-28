@@ -51,7 +51,7 @@ Template.tabbarItem.helpers({
   iconName: function(){
     var instance = UI._templateInstance();
     return instance.data.tabbarItem && instance.data.tabbarItem.getIcon() || null;
-  }
+  },
 
   selectedClass: function(){
     var instance = UI._templateInstance(),
