@@ -1,7 +1,8 @@
 class TabbarItem {
-  constructor(name, icon, template, routeName, routeParams){
+  constructor(name, icon, itemTemplate, contentTemplate, routeName, routeParams){
     this._name = name;
-    this._template = template;
+    this._template = contentTemplate;
+    this._itemTemplate = itemTemplate;
     this._routeName = routeName;
     this._routeParams = routeParams;
     this._icon = icon;
@@ -37,6 +38,10 @@ class TabbarItem {
     return Router.path(this._routeName, this._routeParams);
   }
 
+  getItemTemplate(){
+    return this._itemTemplate;
+  }
+
   getIcon(){
     return this._icon;
   }
@@ -51,6 +56,11 @@ Template.tabbarItem.helpers({
   iconName: function(){
     var instance = UI._templateInstance();
     return instance.data.tabbarItem && instance.data.tabbarItem.getIcon() || null;
+  },
+
+  itemTemplate: function(){
+    var instance = UI._templateInstance();
+    return instance.data.tabbarItem && instance.data.tabbarItem.getItemTemplate() || null;    
   },
 
   selectedClass: function(){

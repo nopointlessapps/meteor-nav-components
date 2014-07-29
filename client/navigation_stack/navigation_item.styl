@@ -5,6 +5,12 @@
   flex-direction(column);
   width: 100%;
   height: 100%;
+  transition: opacity 500ms ease-in;
+  opacity: 1;
+}
+
+.navigation-item.off-screen {
+  opacity: 0;
 }
 
 .navigation-item__content {

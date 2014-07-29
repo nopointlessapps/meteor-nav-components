@@ -44,17 +44,17 @@ class NavigationItem {
     //this._renderedTemplate.templateInstance = this;
 
     //this._renderDeps.changed();
-    
+
     return this._renderedTemplate;
   }
 }
 
 Template.navigationItem.helpers({
-  
+
   backButtonVisible: function(){
     var instance = UI._templateInstance(),
-        navigationItem = instance.data.navigationItem;
-     
+    navigationItem = instance.data.navigationItem;
+
     if( navigationItem instanceof NavigationItem && navigationItem.getNavigationStack() !== undefined ){
       return navigationItem.getNavigationStack().getSize() > 1;
     }
@@ -63,16 +63,16 @@ Template.navigationItem.helpers({
 
   title: function(){
     var instance = UI._templateInstance(),
-        navigationItem = instance.data.navigationItem,
-        template = navigationItem && navigationItem.getTemplate(); 
-        
+    navigationItem = instance.data.navigationItem,
+    template = navigationItem && navigationItem.getTemplate(); 
+
     return template && typeof template.title === 'function' && template.title() || null;
   },
 
   template: function(){
     var instance = UI._templateInstance(),
-        navigationItem = instance.data.navigationItem;
-    
+    navigationItem = instance.data.navigationItem;
+
     return navigationItem && navigationItem.getTemplate() || null;
   },
 
@@ -83,11 +83,12 @@ Template.navigationItem.events({
   "click .navigation-item-action-bar__back-button": function(e, template){
     e.preventDefault();
     e.stopPropagation();
-    
+
     var stack = template.data.navigationItem.getNavigationStack();
     stack && stack.pop();
   }
 
 });
+
 
 export var NavigationItem;

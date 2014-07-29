@@ -12,16 +12,23 @@ class TabbarController {
 
     this._items = items;
     this._items.forEach(function(item, index){
-      item.setTabbarController(that);
-      if( Router.current().path.startsWith( item.getPath() ) ){
-        selectedIndex = index;
+      var path = item.getPath();
+       
+      if( typeof path === "string" ){
+        if( path[path.length] !== "/" ){
+          path = path+"/";
+        }
+
+        item.setTabbarController(that);
+        if( Router.current().path.startsWith( path ) ){
+          selectedIndex = index;
+        }
       }
     });
 
+
     this._itemsDeps.changed();
     this.setSelectedItemIndex(selectedIndex, false);
-    
-
   }
 
   getItems(){

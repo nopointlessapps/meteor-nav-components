@@ -1,4 +1,4 @@
-/*global Deps, Template, NavigationItem, UI, $ */
+/*global Deps, Template, NavigationItem, UI, $, IronLocation */
 
 class NavigationStack {
  
@@ -28,18 +28,51 @@ class NavigationStack {
   pop(){
     var navigationItem = this._navigationStack.pop(),
         newTopItem = this.getTopNavigationItem();
-    navigationItem.setNavigationStack(null);
+        navigationItem.setNavigationStack(null);
 
-    IronLocation.pushState({}, "", newTopItem.getPath());    
+    IronLocation.pushState({}, "", newTopItem.getPath()); //TODO should this be done better? Seems hacky - jdj_dk
     this._navigationDeps.changed();
-
-    console.log("popped to "+ newTopItem.getPath() );
   }
 
   getTopNavigationItem(){
     this._navigationDeps.depend();
     return this._navigationStack[this._navigationStack.length-1] || null;
   }
+
+  getAnimationHooks(){
+    var OFFSCREEN_CLASS = 'off-screen',
+        EVENTS = 'webkitTransitionEnd oTransitionEnd transitionEnd msTransitionEnd transitionend',
+        hooks = {
+          insertElement: function(node, next) {
+            console.log('insert element');
+            
+            $(node)
+            .addClass(OFFSCREEN_CLASS)
+            .insertBefore(next);
+
+            Deps.afterFlush(function() {
+              // call width to force the browser to draw it
+              $(node).width();
+              $(node).removeClass(OFFSCREEN_CLASS);
+            });
+          },
+          // we could do better I guess?
+          moveElement: function(node, next) {
+            hooks.removeElement(node);
+            hooks.insertElement(node, next);
+          },
+          removeElement: function(node) {
+            console.log('remove element');
+            $(node).addClass(OFFSCREEN_CLASS)
+            .on(EVENTS, function() {
+              $(node).remove()
+            });
+          }
+        };
+
+    return hooks;
+  }
+
 
   renderStack(template){
     var navStack = template._navigationStack,
@@ -52,8 +85,6 @@ class NavigationStack {
       $(template.find(".container > .navigation-item")).remove();      
       renderedTemplateToPush = topItem.render();
       UI.insert(renderedTemplateToPush, template.find(".container"));
-
-      console.log(this._navigationStack);
     }
    
   }
@@ -70,6 +101,9 @@ Template.navigationStack.created = function(){
 
 Template.navigationStack.rendered = function(){
   var that = this;
+
+  //this.firstNode._uihooks = this._navigationStack.getAnimationHooks();
+  
 
   Deps.autorun(function(){
     var navigationStackFn = Router.current().route.navigationStack,
