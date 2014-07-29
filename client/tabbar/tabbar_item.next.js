@@ -4,7 +4,7 @@ class TabbarItem {
     this._template = template;
     this._routeName = routeName;
     this._routeParams = routeParams;
-    this._icon;
+    this._icon = icon;
   }
 
   getName(){
