@@ -8,19 +8,28 @@
 }
 
 .navigation-item-action-bar__back-button {
-  flex(1);
   height: 100%;
-  width: 100%;  
   background: orange;
   display: block;
 }
 
 .navigation-item-action-bar__actions {
-  flex(0 40px);
+  flex(0 80px);
   flexbox();
 
   flex-align-items center;
-  flex-justify-content center;
+
+  > a {
+    padding: 0px 10px;
+  }
+}
+
+.navigation-item-action-bar__actions-left {
+  flex-justify-content flex-start;
+}
+
+.navigation-item-action-bar__actions-right {
+  flex-justify-content flex-end;
 }
 
 

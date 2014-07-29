@@ -76,6 +76,14 @@ Template.navigationItem.helpers({
     return navigationItem && navigationItem.getTemplate() || null;
   },
 
+  actionButtons: function(){
+    var instance = UI._templateInstance(),
+    navigationItem = instance.data.navigationItem,
+    template = navigationItem && navigationItem.getTemplate(); 
+
+    return template && typeof template.actionButtons === 'function' && template.actionButtons() || null;   
+  }
+
 });
 
 Template.navigationItem.events({

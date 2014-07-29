@@ -8,19 +8,25 @@ class TabbarController {
 
   setItems(items = []){
     var that = this,
-        selectedIndex = 0;
+        selectedIndex = 0,
+        fixPath = function(path){
+          if( path[path.length] !== "/" ){
+            path = path+"/";
+          }
+          return path;
+        };
 
     this._items = items;
     this._items.forEach(function(item, index){
-      var path = item.getPath();
+      var path = item.getPath(),
+          routerPath = Router.current().path;
        
       if( typeof path === "string" ){
-        if( path[path.length] !== "/" ){
-          path = path+"/";
-        }
-
+        path = fixPath(path);
+        routerPath = fixPath(routerPath);
+        
         item.setTabbarController(that);
-        if( Router.current().path.startsWith( path ) ){
+        if( routerPath.startsWith( path ) ){
           selectedIndex = index;
         }
       }
