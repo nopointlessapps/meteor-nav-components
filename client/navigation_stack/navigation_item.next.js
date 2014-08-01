@@ -39,11 +39,11 @@ class NavigationItem {
     return Template.navigationItem;
   }
 
-  render(){
-    //this._renderedTemplate = UI.render(this.getItemTemplate());
-    //this._renderedTemplate.templateInstance = this;
+  render(data){
+    this._renderedTemplate = UI.renderWithData(this.getItemTemplate(), data);
+    this._renderedTemplate.templateInstance = this;
 
-    //this._renderDeps.changed();
+    this._renderDeps.changed();
 
     return this._renderedTemplate;
   }

@@ -31,7 +31,7 @@ class TabbarItem {
   }
 
   isSelected(){
-    return this._tabbarController.getSelectedItem() === this;
+    return this._tabbarController && this._tabbarController.getSelectedItem() === this;
   }
 
   getPath(){

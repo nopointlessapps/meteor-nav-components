@@ -2,9 +2,11 @@
 
 class NavigationStack {
  
-  constructor(){
+  constructor(template){
     this._navigationStack = [];
     this._navigationDeps = new Deps.Dependency();
+    this._template = template;
+    this._initialRender = true;
   }
 
   setStack(newStack=[]){
@@ -42,13 +44,18 @@ class NavigationStack {
   getAnimationHooks(){
     var OFFSCREEN_CLASS = 'off-screen',
         EVENTS = 'webkitTransitionEnd oTransitionEnd transitionEnd msTransitionEnd transitionend',
+        navigationStack = this,
         hooks = {
           insertElement: function(node, next) {
             console.log('insert element');
             
-            $(node)
-            .addClass(OFFSCREEN_CLASS)
-            .insertBefore(next);
+            $(navigationStack._template.firstNode).append(node);
+            
+            if( !navigationStack._initialRender ){
+              $(node)
+              .addClass(OFFSCREEN_CLASS)
+              .insertBefore(next);
+            }
 
             Deps.afterFlush(function() {
               // call width to force the browser to draw it
@@ -63,10 +70,11 @@ class NavigationStack {
           },
           removeElement: function(node) {
             console.log('remove element');
-            $(node).addClass(OFFSCREEN_CLASS)
-            .on(EVENTS, function() {
-              $(node).remove()
-            });
+            /*$(node).addClass(OFFSCREEN_CLASS)
+            .on(EVENTS, function() {*/
+              console.log('remove events transitions end');
+              $(node).remove();
+//            });
           }
         };
 
@@ -74,19 +82,26 @@ class NavigationStack {
   }
 
 
-  renderStack(template){
-    var navStack = template._navigationStack,
-        topItem = this.getTopNavigationItem(),
+  renderStack(){
+    var template = this._template,
+        navigationStack = template._navigationStack,
+        navigationItem = this.getTopNavigationItem(),
         container = null,
-        renderedTemplateToPush = null;
+        data = Router.current().data(),
+        itemData = { navigationItem, navigationStack, data };
     
-    if( topItem ){
-      container = template.find(".container");
+    if( navigationItem ){
+      if( this._topRenderedTemplate ){
+        UI.remove(this._topRenderedTemplate)
+      }
+      container = template.find(".navigation-stack__container");
       $(template.find(".container > .navigation-item")).remove();      
-      renderedTemplateToPush = topItem.render();
-      UI.insert(renderedTemplateToPush, template.find(".container"));
+      
+      this._topRenderedTemplate = navigationItem.render(itemData);
+      UI.insert(this._topRenderedTemplate, template.find(".navigation-stack__container"));
+
+      this._initialRender = false;
     }
-   
   }
 
   getSize(){
@@ -96,16 +111,16 @@ class NavigationStack {
 
 
 Template.navigationStack.created = function(){
-  this._navigationStack = new NavigationStack();
+  this._navigationStack = new NavigationStack(this);
 };
 
 Template.navigationStack.rendered = function(){
   var that = this;
 
-  //this.firstNode._uihooks = this._navigationStack.getAnimationHooks();
+  this.firstNode._uihooks = this._navigationStack.getAnimationHooks();
   
 
-  Deps.autorun(function(){
+  this.autorun(function(){
     var navigationStackFn = Router.current().route.navigationStack,
         navigationStack = [];
 
@@ -116,7 +131,8 @@ Template.navigationStack.rendered = function(){
           return new NavigationItem(t);
         });
 
-        that._navigationStack.setStack( renderStack )
+        that._navigationStack.setStack( renderStack );
+        that._navigationStack.renderStack();
       }
     }
   });
