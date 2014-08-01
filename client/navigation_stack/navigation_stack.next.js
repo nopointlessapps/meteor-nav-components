@@ -146,7 +146,7 @@ class NavigationStack {
               var container = '.navigation-item__content',
                   contentArea = $(node).find(container)[0];
               
-              if( contentArea !== null && contentArea.children.length > 0){
+              if( contentArea !== null && contentArea.children.length > 0 && 'IScroll' in window){
                 var myScroll = new IScroll(container, {tap: true}); 
               }
             });
