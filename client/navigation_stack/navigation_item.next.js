@@ -25,7 +25,7 @@ class NavigationItem {
   }
 
   getNavigationStack(){
-    this._renderDeps.depend();
+//    this._renderDeps.depend();
     return this._currentNavigationStack;
   }
 
@@ -46,6 +46,10 @@ class NavigationItem {
     this._renderDeps.changed();
 
     return this._renderedTemplate;
+  }
+
+  equals(item) {
+    return item.getPath() === this.getPath() && item.getTemplate() === this.getTemplate();
   }
 }
 
