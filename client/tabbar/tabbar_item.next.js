@@ -63,6 +63,11 @@ Template.tabbarItem.helpers({
     return instance.data.tabbarItem && instance.data.tabbarItem.getItemTemplate() || null;    
   },
 
+  isSelected: function(){
+    var instance = UI._templateInstance();
+    return instance.data.tabbarItem && instance.data.tabbarItem.isSelected() || false;    
+  },
+
   selectedClass: function(){
     var instance = UI._templateInstance(),
         item = instance.data.tabbarItem;

@@ -1,7 +1,7 @@
 <template name="tabbarItem">
   <li class="tabbar-item {{selectedClass}}">
     {{#if itemTemplate}}
-      {{> itemTemplate name=name iconName=iconName}}
+      {{> itemTemplate name=name iconName=iconName isSelected=isSelected}}
     {{else}}
       <div>{{name}}</div>
     {{/if}}

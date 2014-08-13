@@ -1,7 +1,7 @@
 /*global Deps, Template, NavigationItem, UI, $, IronLocation */
 
 class NavigationStack {
- 
+
   constructor(template){
     this._navigationStack = [];
     this._navigationDeps = new Deps.Dependency();
@@ -11,11 +11,11 @@ class NavigationStack {
 
   setStack(newStack=[], firstTime){
     var that = this,
-        compareIndex = 0,
-        i = 0,
-        newItem = null,
-        currentItemAtIndex = null;
-    
+    compareIndex = 0,
+    i = 0,
+    newItem = null,
+    currentItemAtIndex = null;
+
     for( i=0; i<newStack.length; i++){
       newItem = newStack[i];
       currentItemAtIndex = this._navigationStack[i];
@@ -23,58 +23,28 @@ class NavigationStack {
       if( currentItemAtIndex && newItem.equals(currentItemAtIndex) ) {
         compareIndex = i;
       } else {
-       break;
+        break;
       } 
     }
-    /*
-    if( compareIndex > 0 && compareIndex === this._navigationStack.length - 1 ){
-      firstTime = true;
-    }*/
-    
-    this.firstTime = firstTime;// || this._navigationStack.length === 0;
-    
+
     if( this._navigationStack.length > 1 && compareIndex === this._navigationStack.length-2 ){
       this.isPopping = true;
     } else {
       this.isPopping = false;
     }
 
-    console.log("popping: " + this.isPopping + " firstTime: " + this.firstTime);
-/*
     this._navigationStack = newStack.slice(); //clone array
 
     this._navigationStack.forEach(function(item){
       item.setNavigationStack(that);
     });
 
+    this.firstTime = firstTime || (!this.isPopping && this._navigationStack.length === 1 );// || this._navigationStack.length === 0;
+
+
     this._navigationDeps.changed();
- */ 
 
-    /*
-          //this.isPopping = false;
-    if( this._navigationStack.length > 0 ){
-      _.forEach(this._navigationStack, function(item, idx){
-        var newItem = newStack[idx];
-        if( newItem && item.getPath() === newItem.getPath() ){
-          compareIndex = idx;
-        }
-      });
-    }
-   
-
-    if( this._navigationStack.length > 1 && compareIndex === this._navigationStack.length-1 ){
-      this.pop();
-    } else {
-*/
-      this._navigationStack = newStack.slice(); //clone array
-
-      this._navigationStack.forEach(function(item){
-        item.setNavigationStack(that);
-      });
-
-      this._navigationDeps.changed();
-
-      console.log("navstack changed");
+    console.log("navstack changed");
     //}
   }
 
@@ -88,14 +58,14 @@ class NavigationStack {
   pop(){
 
     var topitem = this.getTopNavigationItem(), //navigationItem = this._navigationStack.pop(),
-        newTopItem = this._navigationStack[this._navigationStack.length-2]; //getTopNavigationItem();
+    newTopItem = this._navigationStack[this._navigationStack.length-2]; //getTopNavigationItem();
 
     //navigationItem.setNavigationStack(null);
     topitem.getRenderedTemplate().firstNode().classList.add('popping');
 
     IronLocation.pushState({}, "", newTopItem.getPath()); //TODO should this be done better? Seems hacky - jdj_dk
-  //  this.isPopping = true;
-//    this._navigationDeps.changed();
+    //  this.isPopping = true;
+    //    this._navigationDeps.changed();
     //this.isPopping = false;
   }
 
@@ -144,17 +114,17 @@ class NavigationStack {
             $(node).removeClass(classToAdd);
             Meteor.setTimeout(function(){
               var container = '.navigation-item__content',
-                  contentArea = $(node).find(container)[0];
-              
+              contentArea = $(node).find(container)[0];
+
               if( contentArea !== null && contentArea.children.length > 0 && 'IScroll' in window){
                 var myScroll = new IScroll(container, {tap: true}); 
               }
             });
-            
+
           });
           $(node)
           .addClass(classToAdd);
-          
+
         }
         //}
 
@@ -165,7 +135,7 @@ class NavigationStack {
       removeElement: function(node) {
         classToAdd = navigationStack.isPopping && classes.popFrom || classes.pushFrom;        
         classToAdd = "navigation-item__animated "+classToAdd;
-        
+
         if( !navigationStack.firstTime ){
           node.addEventListener('webkitAnimationEnd', function(){
             $(node).remove();
@@ -213,7 +183,7 @@ Template.navigationStack.created = function(){
 
 Template.navigationStack.rendered = function(){
   var that = this,
-      firstTime = true;
+  firstTime = true;
 
 
 
@@ -234,7 +204,7 @@ Template.navigationStack.rendered = function(){
         that.firstNode._uihooks = that._navigationStack.getAnimationHooks();
 
         firstTime = false;
-        
+
       }
     }
   });
