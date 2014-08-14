@@ -75,8 +75,11 @@ Template.tabbar.created = function(){
 };
 
 Template.tabbar.rendered = function(){
-  var tabbarController = this._tabbarController;
-  tabbarController.setItems(this.data.items);
+  var that = this;
+  this.autorun(function(){
+    var tabbarController = that._tabbarController;
+    tabbarController.setItems(that.data.items());
+  });
 };
 
 Template.tabbar.helpers({
