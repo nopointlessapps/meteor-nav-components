@@ -11,12 +11,16 @@
       <h2 class="navigation-item-action-bar__title">{{title}}</h2>
       <div class="navigation-item-action-bar__actions navigation-item-action-bar__actions-right">
         {{#each actionButtons}}
-          <a href="{{path}}">
-            {{> icon name=iconName}}
+          <a href="{{path}}" data-command="{{command}}">
+            {{#if buttonTitle}}
+              {{buttonTitle}}
+            {{else}}
+              {{> icon name=iconName}}
+            {{/if}}
           </a>
         {{/each}}
       </div>
-            
+
     </div>
     <div class="navigation-item__content">
       {{> template data}}

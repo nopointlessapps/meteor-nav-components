@@ -98,6 +98,35 @@ Template.navigationItem.events({
 
     var stack = template.data.navigationItem.getNavigationStack();
     stack && stack.pop();
+  },
+
+  "click .navigation-item-action-bar__actions > a": function(e, template){
+    var command = "",
+        splitted = [],
+        i = 0,
+        scope = window;
+    
+    if( !e.target.href || e.target.href.trim().length === 0 || e.target.href.trim() === "#" ){
+      e.preventDefault();
+      e.stopPropagation();
+      
+      command = e.target.getAttribute('data-command');
+      command = command && command.trim();
+
+      if( command && command.length > 0 ){
+        splitted = command.split(".");
+        
+        
+        for( i=0; i<splitted.length; i++){
+          if( scope ){
+            scope = scope[splitted[i]];
+          } else {
+            throw new Error("could not locate function to execute");
+          }
+        }
+        scope.apply(template);
+      }
+    }
   }
 
 });
