@@ -86,6 +86,24 @@ Template.navigationItem.helpers({
     template = navigationItem && navigationItem.getTemplate(); 
 
     return template && typeof template.actionButtons === 'function' && template.actionButtons() || null;   
+  },
+
+  isLoading: function(){
+        var instance = UI._templateInstance(),
+    navigationItem = instance.data.navigationItem,
+    template = navigationItem && navigationItem.getTemplate(); 
+
+    if( template && typeof template.isLoading === "function" ){
+      return template.isLoading();
+    }
+    return !Router.current().ready();
+  },
+
+  loadingTemplate: function(){
+    if( Router.options.loadingTemplate ){
+      return Template[Router.options.loadingTemplate];
+    }
+    return null;
   }
 
 });

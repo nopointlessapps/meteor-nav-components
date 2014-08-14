@@ -23,7 +23,11 @@
 
     </div>
     <div class="navigation-item__content">
-      {{> template data}}
+      {{#if isLoading}}
+        {{>loadingTemplate}}
+      {{else}}
+        {{> template data}}
+      {{/if}}
     </div>
   </div>
 </template>
