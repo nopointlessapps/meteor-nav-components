@@ -5,11 +5,11 @@
         {{> tabbarItem tabbarItem=this}}
       {{/each}}
     </ul>
-    <div class="tabbar__content-container">
+    <div class="tabbar__content-container {{class}}">
       {{> selectedItemTemplate}}
     </div>    
   {{else}}
-    <div class="tabbar__content-container">
+    <div class="tabbar__content-container {{class}}">
       {{> selectedItemTemplate}}
     </div>
     <ul class="tabbar__items {{class}}">

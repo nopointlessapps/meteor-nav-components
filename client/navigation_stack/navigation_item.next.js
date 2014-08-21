@@ -104,7 +104,16 @@ Template.navigationItem.helpers({
       return Template[Router.options.loadingTemplate];
     }
     return null;
+  },
+
+  'class': function(){
+    var instance = UI._templateInstance(),
+    navigationItem = instance.data.navigationItem,
+    template = navigationItem && navigationItem.getTemplate(); 
+
+    return template && typeof template.navigationItemClass === 'function' && template.navigationItemClass() || null;   
   }
+
 
 });
 
