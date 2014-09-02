@@ -24,9 +24,9 @@
     </div>
     <div class="navigation-item__content">
       {{#if isLoading}}
-        {{>loadingTemplate}}
+        {{> UI.dynamic template=loadingTemplate}}
       {{else}}
-        {{> template data}}
+        {{> UI.dynamic template=template data=data}}
       {{/if}}
     </div>
   </div>
