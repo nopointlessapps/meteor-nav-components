@@ -20,19 +20,24 @@ Template.navigationItem.helpers({
 		return template && typeof template.title === 'function' && template.title() || null;
 	},
 
-	template: function () {
+	templateName: function () {
 		var instance = UI._templateInstance(),
-			navigationItem = instance.data.navigationItem;
+			navigationItem = instance.data.navigationItem,
+			template = navigationItem && navigationItem.getTemplateName() || null;
 
-		return navigationItem && navigationItem.getTemplate() || null;
+		if (template) {
+			if (template.indexOf('Template.') === 0) {
+				template = template.substr('Template.'.length);
+			}
+			return template;
+		}
 	},
 
 	actionButtons: function () {
 		var instance = UI._templateInstance(),
-			navigationItem = instance.data.navigationItem,
-			template = navigationItem && navigationItem.getTemplate();
+			navigationItem = instance.data.navigationItem;
 
-		return template && typeof template.actionButtons === 'function' && template.actionButtons() || null;
+		return navigationItem && navigationItem.actionButtons();
 	},
 
 	isLoading: function () {
@@ -73,31 +78,17 @@ Template.navigationItem.events({
 	},
 
 	"click .navigation-item-action-bar__actions > a": function (e, template) {
-		var command = "",
-			splitted = [],
-			i = 0,
-			scope = window;
+		var identifier = "",
+			navigationItem = template.data.navigationItem;
 
 		if (!e.target.href || e.target.href.trim().length === 0 || e.target.href.trim() === "#") {
 			e.preventDefault();
 			e.stopPropagation();
 
-			command = e.target.getAttribute('data-command');
-			command = command && command.trim();
+			identifier = e.target.getAttribute('data-identifier');
+			identifier = identifier && identifier.trim();
 
-			if (command && command.length > 0) {
-				splitted = command.split(".");
-
-
-				for (i = 0; i < splitted.length; i++) {
-					if (scope) {
-						scope = scope[splitted[i]];
-					} else {
-						throw new Error("could not locate function to execute");
-					}
-				}
-				scope.apply(template);
-			}
+			navigationItem.executeCommand(identifier);
 		}
 	}
 

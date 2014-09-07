@@ -4,6 +4,7 @@ class NavigationItem {
 		this._template = options.template;
 		this._path = options.path;
 		this._renderDeps = new Deps.Dependency();
+		this._actionButtonsDeps = new Deps.Dependency();
 
 		if (this._path === undefined || this._path === null) {
 			console.error("NavigationItem requires a path");
@@ -16,6 +17,10 @@ class NavigationItem {
 
 	getTemplate() {
 		return this._template;
+	}
+
+	getTemplateName() {
+		return this._template.__templateName;
 	}
 
 	setNavigationStack(stack) {
@@ -35,6 +40,32 @@ class NavigationItem {
 
 	getItemTemplate() {
 		return Template.navigationItem;
+	}
+
+	actionButtons() {
+		this._actionButtonsDeps.depend();
+		return this._actionButtons;
+	}
+
+	setActionButtons(buttons = []) {
+		var that = this;
+
+		if (_.isArray(buttons)) {
+			this._actionButtons = buttons;
+			this._buttonsMap = {};
+			_.forEach(this._actionButtons, function (item) {
+				if (item.identifier && typeof item.command === 'function') {
+					that._buttonsMap[item.identifier] = item.command;
+				}
+			});
+
+			this._actionButtonsDeps.changed();
+		}
+	}
+
+	executeCommand(identifier){
+		var command = this._buttonsMap && this._buttonsMap[identifier];
+		command && command();
 	}
 
 	render(data) {

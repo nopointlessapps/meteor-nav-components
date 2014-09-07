@@ -11,7 +11,7 @@
       <h2 class="navigation-item-action-bar__title">{{title}}</h2>
       <div class="navigation-item-action-bar__actions navigation-item-action-bar__actions-right">
         {{#each actionButtons}}
-          <a href="{{path}}" data-command="{{command}}">
+          <a href="{{path}}" data-identifier="{{identifier}}">
             {{#if buttonTitle}}
               {{buttonTitle}}
             {{else}}
@@ -26,7 +26,7 @@
       {{#if isLoading}}
         {{> UI.dynamic template=loadingTemplate}}
       {{else}}
-        {{> UI.dynamic template=template data=data}}
+        {{> UI.dynamic template=templateName data=this}}
       {{/if}}
     </div>
   </div>
