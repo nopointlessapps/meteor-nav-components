@@ -20,7 +20,10 @@ class NavigationItem {
 	}
 
 	getTemplateName() {
-		return this._template.__templateName;
+		var viewName = this._template.viewName,
+            prefixLength = "Template.".length;
+
+        return viewName.substr(prefixLength);
 	}
 
 	setNavigationStack(stack) {
@@ -68,8 +71,13 @@ class NavigationItem {
 		command && command();
 	}
 
-	render(data) {
-		this._renderedTemplate = UI.renderWithData(this.getItemTemplate(), data);
+	render(data, parentNode) {
+        if( !parentNode ){
+            console.error && console.error("A parent node is required for the navigation item to render it self");
+            return;
+        }
+
+		this._renderedTemplate = Blaze.renderWithData(this.getItemTemplate(), data, parentNode);
 		this._renderedTemplate.templateInstance = this;
 
 		this._renderDeps.changed();

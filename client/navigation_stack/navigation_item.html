@@ -1,33 +1,34 @@
 <template name="navigationItem">
-  <div class="navigation-item {{class}}">
-    <div class="navigation-item-action-bar">
-      <div class="navigation-item-action-bar__actions navigation-item-action-bar__actions-left">
-      {{#if backButtonVisible}}
-        <a href="" class="navigation-item-action-bar__back-button">
-          {{>icon name='back-arrow'}}
-        </a>
-      {{/if}}
-    </div>
-      <h2 class="navigation-item-action-bar__title">{{title}}</h2>
-      <div class="navigation-item-action-bar__actions navigation-item-action-bar__actions-right">
-        {{#each actionButtons}}
-          <a href="{{path}}" data-identifier="{{identifier}}">
-            {{#if buttonTitle}}
-              {{buttonTitle}}
-            {{else}}
-              {{> icon name=iconName}}
-            {{/if}}
-          </a>
-        {{/each}}
-      </div>
+    <div class="navigation-item {{class}}">
+        <div class="navigation-item-action-bar">
+            <div class="navigation-item-action-bar__actions navigation-item-action-bar__actions-left">
+                {{#if backButtonVisible}}
+                <a href="" class="navigation-item-action-bar__back-button">
+                    {{>icon name='back-arrow'}}
+                </a>
+                {{/if}}
+            </div>
+            <h2 class="navigation-item-action-bar__title">{{title}}</h2>
 
+            <div class="navigation-item-action-bar__actions navigation-item-action-bar__actions-right">
+                {{#each actionButtons}}
+                <a href="{{path}}" data-identifier="{{identifier}}">
+                    {{#if buttonTitle}}
+                    {{buttonTitle}}
+                    {{else}}
+                    {{> icon name=iconName}}
+                    {{/if}}
+                </a>
+                {{/each}}
+            </div>
+
+        </div>
+        <div class="navigation-item__content">
+            {{#if isLoading}}
+            {{> UI.dynamic template=loadingTemplate}}
+            {{else}}
+            {{> UI.dynamic template=templateName data=this}}
+            {{/if}}
+        </div>
     </div>
-    <div class="navigation-item__content">
-      {{#if isLoading}}
-        {{> UI.dynamic template=loadingTemplate}}
-      {{else}}
-        {{> UI.dynamic template=templateName data=this}}
-      {{/if}}
-    </div>
-  </div>
 </template>
