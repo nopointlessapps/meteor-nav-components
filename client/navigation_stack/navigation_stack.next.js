@@ -48,6 +48,14 @@ class NavigationStack {
         //}
     }
 
+    setIsModal(isModal){
+        this._isModal = isModal;
+    }
+
+    isModal(){
+        return this._isModal;
+    }
+
     push(navigationItem) {
         this.isPopping = false;
         this._navigationStack.push(navigationItem);
@@ -170,15 +178,18 @@ Template.navigationStack.created = function () {
 
 Template.navigationStack.rendered = function () {
     var that = this,
-        firstTime = true;
+        firstTime = true,
+        {stackId, isModal} = this.data || {};
 
+
+    this._navigationStack.setIsModal(isModal);
 
     this.autorun(function () {
         var navigationStackFn = Router.current().route.navigationStack,
             navigationStack = [];
 
         if (typeof navigationStackFn === 'function') {
-            navigationStack = navigationStackFn();
+            navigationStack = navigationStackFn(stackId);
             if (navigationStack && navigationStack.length > 0) {
                 var renderStack = navigationStack.map((t) => {
                     return new NavigationItem(t);

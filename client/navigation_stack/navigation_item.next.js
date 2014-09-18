@@ -7,7 +7,7 @@ Template.navigationItem.helpers({
 			navigationItem = instance.data.navigationItem;
 
 		if (navigationItem instanceof NavigationItem && navigationItem.getNavigationStack() !== undefined) {
-			return navigationItem.getNavigationStack().getSize() > 1;
+			return navigationItem.getNavigationStack().getSize() > 1 || navigationItem.getNavigationStack().isModal();
 		}
 		return false;
 	},
@@ -68,18 +68,20 @@ Template.navigationItem.helpers({
 
     'isModal': function () {
         var instance = UI._templateInstance(),
-            navigationItem = instance.data.navigationItem,
-            template = navigationItem && navigationItem.getTemplate();
+            navigationItem = instance.data.navigationItem;
 
-        return template && typeof template.isModal === 'function' && template.isModal();
+        if (navigationItem instanceof NavigationItem && navigationItem.getNavigationStack() !== undefined) {
+            return navigationItem.getNavigationStack().isModal();
+        }
     },
 
     'isModalClass': function () {
         var instance = UI._templateInstance(),
-            navigationItem = instance.data.navigationItem,
-            template = navigationItem && navigationItem.getTemplate();
+            navigationItem = instance.data.navigationItem;
 
-        return template && typeof template.isModal === 'function' && template.isModal() && "navigation-item--is-modal" || null;
+        if (navigationItem instanceof NavigationItem && navigationItem.getNavigationStack() !== undefined) {
+            return navigationItem.getNavigationStack().isModal();
+        }
     }
 });
 
