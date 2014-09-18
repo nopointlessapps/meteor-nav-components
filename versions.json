@@ -2,11 +2,15 @@
   "dependencies": [
     [
       "accounts-base",
-      "1.0.1"
+      "1.1.0"
     ],
     [
       "application-configuration",
-      "1.0.1"
+      "1.0.2"
+    ],
+    [
+      "base64",
+      "1.0.0"
     ],
     [
       "binary-heap",
@@ -18,6 +22,10 @@
     ],
     [
       "blaze-tools",
+      "1.0.0"
+    ],
+    [
+      "boilerplate-generator",
       "1.0.0"
     ],
     [
@@ -38,7 +46,7 @@
     ],
     [
       "ejson",
-      "1.0.1"
+      "1.0.2"
     ],
     [
       "follower-livedata",
@@ -58,7 +66,7 @@
     ],
     [
       "htmljs",
-      "1.0.0"
+      "1.0.1"
     ],
     [
       "id-map",
@@ -94,23 +102,23 @@
     ],
     [
       "logging",
-      "1.0.2"
-    ],
-    [
-      "meteor",
       "1.0.3"
     ],
     [
+      "meteor",
+      "1.1.0"
+    ],
+    [
       "minifiers",
-      "1.0.2"
+      "1.1.0"
     ],
     [
       "minimongo",
-      "1.0.2"
+      "1.0.3"
     ],
     [
       "mongo",
-      "1.0.4"
+      "1.0.5"
     ],
     [
       "mquandalle:harmony",
@@ -146,7 +154,7 @@
     ],
     [
       "routepolicy",
-      "1.0.0"
+      "1.0.1"
     ],
     [
       "service-configuration",
@@ -162,11 +170,11 @@
     ],
     [
       "stylus",
-      "1.0.3"
+      "1.0.4"
     ],
     [
       "templating",
-      "1.0.5"
+      "1.0.6"
     ],
     [
       "tracker",
@@ -182,10 +190,14 @@
     ],
     [
       "webapp",
-      "1.0.3"
+      "1.1.1"
+    ],
+    [
+      "webapp-hashing",
+      "1.0.0"
     ]
   ],
   "pluginDependencies": [],
-  "toolVersion": "meteor-tool@1.0.28",
+  "toolVersion": "meteor-tool@1.0.30",
   "format": "1.0"
 }

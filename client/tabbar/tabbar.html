@@ -1,21 +1,29 @@
 <template name="tabbar">
-  {{#if inverse}}
-    <ul class="tabbar__items {{class}}">
-      {{#each tabbarItems}}
-        {{> tabbarItem tabbarItem=this}}
-      {{/each}}
-    </ul>
-    <div class="tabbar__content-container {{class}}">
-      {{> selectedItemTemplate}}
-    </div>    
-  {{else}}
-    <div class="tabbar__content-container {{class}}">
-      {{> selectedItemTemplate}}
-    </div>
-    <ul class="tabbar__items {{class}}">
-      {{#each tabbarItems}}
-        {{> tabbarItem tabbarItem=this}}
-      {{/each}}
-    </ul>
-  {{/if}}
+    {{#if shouldRenderAll}}
+        {{#if inverse}}
+        <ul class="tabbar__items {{class}}">
+            {{#each tabbarItems}}
+            {{> tabbarItem tabbarItem=this}}
+            {{/each}}
+        </ul>
+        <div class="tabbar__content-container {{class}}">
+            {{> selectedItemTemplate}}
+        </div>
+        {{else}}
+        <div class="tabbar__content-container {{class}}">
+            {{> selectedItemTemplate}}
+        </div>
+        <ul class="tabbar__items {{class}}">
+            {{#each tabbarItems}}
+            {{> tabbarItem tabbarItem=this}}
+            {{/each}}
+        </ul>
+        {{/if}}
+    {{else}}
+        <ul class="tabbar__items {{class}}">
+            {{#each tabbarItems}}
+            {{> tabbarItem tabbarItem=this}}
+            {{/each}}
+        </ul>
+    {{/if}}
 </template>

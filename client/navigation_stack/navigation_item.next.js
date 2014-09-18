@@ -58,13 +58,29 @@ Template.navigationItem.helpers({
 		return null;
 	},
 
-	'class': function () {
-		var instance = UI._templateInstance(),
-			navigationItem = instance.data.navigationItem,
-			template = navigationItem && navigationItem.getTemplate();
+    'class': function () {
+        var instance = UI._templateInstance(),
+            navigationItem = instance.data.navigationItem,
+            template = navigationItem && navigationItem.getTemplate();
 
-		return template && typeof template.navigationItemClass === 'function' && template.navigationItemClass() || null;
-	}
+        return template && typeof template.navigationItemClass === 'function' && template.navigationItemClass() || null;
+    },
+
+    'isModal': function () {
+        var instance = UI._templateInstance(),
+            navigationItem = instance.data.navigationItem,
+            template = navigationItem && navigationItem.getTemplate();
+
+        return template && typeof template.isModal === 'function' && template.isModal();
+    },
+
+    'isModalClass': function () {
+        var instance = UI._templateInstance(),
+            navigationItem = instance.data.navigationItem,
+            template = navigationItem && navigationItem.getTemplate();
+
+        return template && typeof template.isModal === 'function' && template.isModal() && "navigation-item--is-modal" || null;
+    }
 });
 
 Template.navigationItem.events({

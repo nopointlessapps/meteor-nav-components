@@ -80,6 +80,21 @@ Template.tabbar.rendered = function(){
     var tabbarController = that._tabbarController;
     tabbarController.setItems(that.data.items());
   });
+
+    this.autorun(function(){
+        var tabbarController = that._tabbarController,
+            selectedItem = tabbarController.getSelectedItem(),
+            template = selectedItem && selectedItem.getTemplate(),
+            targetDom = that.data.target && document.querySelector(that.data.target);
+
+        if( tabbarController._currentRenderedView ){
+            Blaze.remove(tabbarController._currentRenderedView);
+        }
+
+        if( template && targetDom ){
+            tabbarController._currentRenderedView = Blaze.renderWithData(template, {}, targetDom);
+        }
+    });
 };
 
 Template.tabbar.helpers({
@@ -99,8 +114,9 @@ Template.tabbar.helpers({
     return selectedItem && selectedItem.getTemplate() || null;
   },
 
-  tabbarController: function(){
-    debugger
+  shouldRenderAll: function(){
+      var instance = UI._templateInstance();
+      return instance && instance.data.target === undefined || null
   }
 });
 

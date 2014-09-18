@@ -9,7 +9,7 @@ class NavigationStack {
         this._initialRender = true;
     }
 
-    setStack(newStack = [], firstTime) {
+    setStack(newStack = [], firstTime = false) {
         var that = this,
             compareIndex = 0,
             i = 0,
@@ -56,17 +56,12 @@ class NavigationStack {
     }
 
     pop() {
-
         var topitem = this.getTopNavigationItem(), //navigationItem = this._navigationStack.pop(),
             newTopItem = this._navigationStack[this._navigationStack.length - 2]; //getTopNavigationItem();
 
-        //navigationItem.setNavigationStack(null);
         topitem.getRenderedTemplate().firstNode().classList.add('popping');
 
         IronLocation.pushState({}, "", newTopItem.getPath()); //TODO should this be done better? Seems hacky - jdj_dk
-        //  this.isPopping = true;
-        //    this._navigationDeps.changed();
-        //this.isPopping = false;
     }
 
     getTopNavigationItem() {
@@ -102,50 +97,42 @@ class NavigationStack {
             classToAdd = "",
             EVENTS = "webkitAnimationEnd " + this._whichTransitionEvent(),
             navigationStack = this,
-            hooks = {
-                insertElement: function (node, next) {
-                    classToAdd = navigationStack.isPopping && classes.popTo || classes.pushTo;
-                    classToAdd = "navigation-item__animated " + classToAdd;
+            hooks = {};
 
-                    $(navigationStack._template.firstNode).append(node);
 
-                    if (!navigationStack.firstTime) {
-                        node.addEventListener('webkitAnimationEnd', function () {
-                            $(node).removeClass(classToAdd);
-                            Meteor.setTimeout(function () {
-                                var container = '.navigation-item__content',
-                                    contentArea = $(node).find(container)[0];
+        hooks.insertElement = function (node, next) {
+            classToAdd = navigationStack.isPopping && classes.popTo || classes.pushTo;
+            classToAdd = "navigation-item__animated " + classToAdd;
 
-                                if (contentArea !== null && contentArea.children.length > 0 && 'IScroll' in window) {
-                                    var myScroll = new IScroll(container, {tap: true});
-                                }
-                            });
+            $(navigationStack._template.firstNode).append(node);
 
-                        });
-                        $(node)
-                            .addClass(classToAdd);
+            if (!navigationStack.firstTime) {
+                node.addEventListener('webkitAnimationEnd', function () {
+                    $(node).removeClass(classToAdd);
+                });
+                $(node)
+                    .addClass(classToAdd);
 
-                    }
-                    //}
+            }
+            //}
 
-                    Deps.afterFlush(function () {
-                        $(node).width();
-                    });
-                },
-                removeElement: function (node) {
-                    classToAdd = navigationStack.isPopping && classes.popFrom || classes.pushFrom;
-                    classToAdd = "navigation-item__animated " + classToAdd;
+            Deps.afterFlush(function () {
+                $(node).width();
+            });
+        };
+        hooks.removeElement = function (node) {
+            classToAdd = navigationStack.isPopping && classes.popFrom || classes.pushFrom;
+            classToAdd = "navigation-item__animated " + classToAdd;
 
-                    if (!navigationStack.firstTime) {
-                        node.addEventListener('webkitAnimationEnd', function () {
-                            $(node).remove();
-                        });
-                        $(node).addClass(classToAdd);
-                    } else {
-                        $(node).remove();
-                    }
-                }
-            };
+            if (!navigationStack.firstTime) {
+                node.addEventListener('webkitAnimationEnd', function () {
+                    $(node).remove();
+                });
+                $(node).addClass(classToAdd);
+            } else {
+                $(node).remove();
+            }
+        };
 
         return hooks;
     }

@@ -1,10 +1,15 @@
 <template name="navigationItem">
-    <div class="navigation-item {{class}}">
+    <div class="navigation-item {{class}} {{isModalClass}}">
         <div class="navigation-item-action-bar">
             <div class="navigation-item-action-bar__actions navigation-item-action-bar__actions-left">
+
                 {{#if backButtonVisible}}
                 <a href="" class="navigation-item-action-bar__back-button">
-                    {{>icon name='back-arrow'}}
+                    {{#if isModal}}
+                        Cancel
+                    {{else}}
+                        {{>icon name='back-arrow'}}
+                    {{/if}}
                 </a>
                 {{/if}}
             </div>
