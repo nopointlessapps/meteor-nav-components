@@ -1,6 +1,6 @@
 /*global Deps, Template, NavigationItem, UI, $, IronLocation */
 
-class NavigationStack {
+export class NavigationStack {
 
     constructor(template) {
         this._navigationStack = [];
@@ -68,19 +68,35 @@ class NavigationStack {
     }
 
     push(navigationItem) {
+        var topitem = this.getTopNavigationItem();
+
         this.isPopping = false;
+
+        navigationItem.setNavigationStack(this);
         this._navigationStack.push(navigationItem);
-        navigationItem.setNaviggetTopNavigationItemationStack(this);
+
+        this.renderStack();
         this._navigationDeps.changed();
+
+        IronLocation.pushState({}, "", navigationItem.getPath(), true);
+    }
+
+    getContentDomNode() {
+        return this._template.find('.navigation-stack__container');
     }
 
     pop() {
         var topitem = this.getTopNavigationItem(), //navigationItem = this._navigationStack.pop(),
             newTopItem = this._navigationStack[this._navigationStack.length - 2]; //getTopNavigationItem();
 
-        topitem.getRenderedTemplate().firstNode().classList.add('popping');
+        this.isPopping = true;
+        this._navigationStack.pop();
 
-        IronLocation.pushState({}, "", newTopItem.getPath()); //TODO should this be done better? Seems hacky - jdj_dk
+        this.renderStack();
+
+        IronLocation.pushState({}, "", newTopItem.getPath(), true);
+        //topitem.getRenderedTemplate().firstNode().classList.add('popping');
+        //IronLocation.pushState({}, "", newTopItem.getPath()); //TODO should this be done better? Seems hacky - jdj_dk
     }
 
     getTopNavigationItem() {
@@ -169,11 +185,7 @@ class NavigationStack {
             if (this._topRenderedTemplate) {
                 UI.remove(this._topRenderedTemplate)
             }
-            container = template.find(".navigation-stack__container");
-            $(template.find(".container > .navigation-item")).remove();
-
-            this._topRenderedTemplate = navigationItem.render(itemData, template.find(".navigation-stack__container"));
-
+            this._topRenderedTemplate = navigationItem.render(itemData, this.getContentDomNode());
         }
     }
 
@@ -185,6 +197,7 @@ class NavigationStack {
 
 Template.navigationStack.created = function () {
     this._navigationStack = new NavigationStack(this);
+    console.log(this._navigationStack.stackId(), "created new instance of navigation stack");
 };
 
 Template.navigationStack.rendered = function () {
@@ -265,4 +278,4 @@ Template.navigationStack.events({
 
 });
 
-export var NavigationStack;
+
