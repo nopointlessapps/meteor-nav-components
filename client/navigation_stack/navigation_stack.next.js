@@ -7,6 +7,13 @@ class NavigationStack {
         this._navigationDeps = new Deps.Dependency();
         this._template = template;
         this._initialRender = true;
+
+        if( template.data ){
+            this._stackId = template.data.stackId;
+            this._isModal = template.data.isModal;
+            this._className = template.data.className;
+
+        }
     }
 
     setStack(newStack = [], firstTime = false) {
@@ -48,12 +55,16 @@ class NavigationStack {
         //}
     }
 
-    setIsModal(isModal){
-        this._isModal = isModal;
-    }
-
     isModal(){
         return this._isModal;
+    }
+
+    stackId(){
+        return this._stackId;
+    }
+
+    className(){
+        return this._className;
     }
 
     push(navigationItem) {
@@ -179,10 +190,7 @@ Template.navigationStack.created = function () {
 Template.navigationStack.rendered = function () {
     var that = this,
         firstTime = true,
-        {stackId, isModal} = this.data || {};
-
-
-    this._navigationStack.setIsModal(isModal);
+        {stackId} = this.data || {};
 
     this.autorun(function () {
         var navigationStackFn = Router.current().route.navigationStack,
@@ -225,6 +233,20 @@ Template.navigationStack.helpers({
 
     topItemData: function () {
         return Router.current().data();
+    },
+
+    stackId: function () {
+        var instance = UI._templateInstance();
+        if (instance && instance._navigationStack) {
+            return instance._navigationStack.stackId();
+        }
+    },
+
+    className: function () {
+        var instance = UI._templateInstance();
+        if (instance && instance._navigationStack) {
+            return instance._navigationStack.className();
+        }
     },
 
     topNavigationItem: function () {
