@@ -98,7 +98,7 @@ Template.navigationItem.events({
 		e.preventDefault();
 		e.stopPropagation();
 
-		var stack = template.data.navigationItem.getNavigationStack();
+        var stack = template.data.navigationItem.getNavigationStack();
 		stack && stack.pop();
 	},
 

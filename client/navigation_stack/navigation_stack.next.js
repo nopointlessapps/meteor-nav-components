@@ -85,9 +85,6 @@ export class NavigationStack {
     }
 
     pop() {
-        var topitem = this.getTopNavigationItem(), //navigationItem = this._navigationStack.pop(),
-            newTopItem = this._navigationStack[this._navigationStack.length - 2]; //getTopNavigationItem();
-
         this.isPopping = true;
         this._navigationStack.pop();
 
@@ -104,7 +101,6 @@ export class NavigationStack {
     }
 
     getTopNavigationItem() {
-        //this._navigationDeps.depend();
         return this._navigationStack[this._navigationStack.length - 1] || null;
     }
 
@@ -186,11 +182,10 @@ export class NavigationStack {
             itemData = { navigationItem, navigationStack, data },
             currentDOMElement = template.find('.navigation-item');
 
+        if( currentDOMElement ){
+            currentDOMElement.remove();
+        }
         if (navigationItem) {
-            if( currentDOMElement ){
-                currentDOMElement.remove();
-            }
-
             this._topRenderedTemplate = navigationItem.render(itemData, this.getContentDomNode());
         }
     }
@@ -200,10 +195,36 @@ export class NavigationStack {
     }
 }
 
+export var NavComponents = {
+    navigationStacks: {
+        map: {},
+        list: []
+    },
+
+    stackWithId: function(stackId){
+        return this.navigationStacks.map[stackId];
+    }
+};
 
 Template.navigationStack.created = function () {
     this._navigationStack = new NavigationStack(this);
-    console.log(this._navigationStack.stackId(), "created new instance of navigation stack");
+    var stackId = this._navigationStack.stackId();
+    console.log(stackId, "created new instance of navigation stack");
+
+    NavComponents.navigationStacks.map[stackId] = this._navigationStack;
+    NavComponents.navigationStacks.list.push(this._navigationStack);
+};
+
+Template.navigationStack.destroyed = function () {
+    var stackId = this._navigationStack.stackId(),
+        index = _.indexOf(NavComponents.navigationStacks.list, this._navigationStack);
+    console.log(stackId, "destroyed instance of navigation stack");
+
+    delete NavComponents.navigationStacks.map[stackId];
+    if( index !== -1 ){
+        NavComponents.navigationStacks.list.splice(index, 1);
+    }
+
 };
 
 Template.navigationStack.rendered = function () {
