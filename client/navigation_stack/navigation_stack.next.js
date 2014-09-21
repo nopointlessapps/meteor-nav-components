@@ -93,10 +93,21 @@ export class NavigationStack {
     }
 
     updateURL(){
-        var topItem = this._navigationStack[this._navigationStack.length - 1];
+        var topItem = this._navigationStack[this._navigationStack.length - 1],
+            path = "",
+            otherStack = undefined;
 
-        if( typeof IronLocation !== 'undefined' && topItem && topItem.getPath()){
-            IronLocation.pushState({}, "", topItem.getPath(), true);
+        if( !topItem ){
+            otherStack = _.find(NavComponents.navigationStacks.list, function(s){
+                return s !== this;
+            }, this);
+            path = otherStack && otherStack.getTopNavigationItem().getPath();
+        } else {
+            path = topItem.getPath();
+        }
+
+        if( typeof IronLocation !== 'undefined' && path){
+            IronLocation.pushState({}, "", path, true);
         }
     }
 
