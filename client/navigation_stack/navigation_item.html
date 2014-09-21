@@ -29,10 +29,10 @@
 
         </div>
         <div class="navigation-item__content">
-            {{#if isLoading}}
-            {{> UI.dynamic template=loadingTemplate}}
+            {{#if ready}}
+            {{> UI.dynamic template=templateName data=data}}
             {{else}}
-            {{> UI.dynamic template=templateName data=this}}
+            {{> UI.dynamic template=loadingTemplate}}
             {{/if}}
         </div>
     </div>

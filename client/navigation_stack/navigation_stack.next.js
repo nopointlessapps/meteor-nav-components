@@ -77,8 +77,7 @@ export class NavigationStack {
 
         this.renderStack();
         this._navigationDeps.changed();
-
-        IronLocation.pushState({}, "", navigationItem.getPath(), true);
+        this.updateURL();
     }
 
     getContentDomNode() {
@@ -93,10 +92,15 @@ export class NavigationStack {
         this._navigationStack.pop();
 
         this.renderStack();
+        this.updateURL();
+    }
 
-        IronLocation.pushState({}, "", newTopItem.getPath(), true);
-        //topitem.getRenderedTemplate().firstNode().classList.add('popping');
-        //IronLocation.pushState({}, "", newTopItem.getPath()); //TODO should this be done better? Seems hacky - jdj_dk
+    updateURL(){
+        var topItem = this._navigationStack[this._navigationStack.length - 1];
+
+        if( typeof IronLocation !== 'undefined' && topItem && topItem.getPath()){
+            IronLocation.pushState({}, "", topItem.getPath(), true);
+        }
     }
 
     getTopNavigationItem() {
@@ -179,12 +183,14 @@ export class NavigationStack {
             navigationItem = this.getTopNavigationItem(),
             container = null,
             data = Router.current().data(),
-            itemData = { navigationItem, navigationStack, data };
+            itemData = { navigationItem, navigationStack, data },
+            currentDOMElement = template.find('.navigation-item');
 
         if (navigationItem) {
-            if (this._topRenderedTemplate) {
-                UI.remove(this._topRenderedTemplate)
+            if( currentDOMElement ){
+                currentDOMElement.remove();
             }
+
             this._topRenderedTemplate = navigationItem.render(itemData, this.getContentDomNode());
         }
     }

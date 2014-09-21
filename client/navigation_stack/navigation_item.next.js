@@ -40,16 +40,19 @@ Template.navigationItem.helpers({
 		return navigationItem && navigationItem.actionButtons();
 	},
 
-	isLoading: function () {
+    data: function () {
 		var instance = UI._templateInstance(),
-			navigationItem = instance.data.navigationItem,
-			template = navigationItem && navigationItem.getTemplate();
+			navigationItem = instance.data.navigationItem;
 
-		if (template && typeof template.isLoading === "function") {
-			return template.isLoading();
-		}
-		return !Router.current().ready();
+		return navigationItem && navigationItem.data();
 	},
+
+    ready: function(){
+        var instance = UI._templateInstance(),
+            navigationItem = instance.data.navigationItem;
+
+        return navigationItem && navigationItem.ready();
+    },
 
 	loadingTemplate: function () {
 		if (Router.options.loadingTemplate) {
@@ -65,6 +68,8 @@ Template.navigationItem.helpers({
 
         return template && typeof template.navigationItemClass === 'function' && template.navigationItemClass() || null;
     },
+
+
 
     'isModal': function () {
         var instance = UI._templateInstance(),
@@ -84,6 +89,8 @@ Template.navigationItem.helpers({
         }
     }
 });
+
+
 
 Template.navigationItem.events({
 
