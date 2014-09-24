@@ -5,10 +5,14 @@
 
                 {{#if backButtonVisible}}
                 <a href="" class="navigation-item-action-bar__back-button">
-                    {{#if isModal}}
+                    {{#if lastInModal}}
                         Cancel
                     {{else}}
-                        {{>icon name='back-arrow'}}
+                        {{#if backButtonTitle}}
+                            {{backButtonTitle}}
+                        {{else}}
+                            {{>icon name='back-arrow'}}
+                        {{/if}}
                     {{/if}}
                 </a>
                 {{/if}}

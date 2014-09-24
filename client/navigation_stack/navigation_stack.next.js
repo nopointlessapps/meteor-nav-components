@@ -7,12 +7,13 @@ export class NavigationStack {
         this._navigationDeps = new Deps.Dependency();
         this._template = template;
         this._initialRender = true;
+        this._canBeClosed = true;
 
-        if( template.data ){
+        if (template.data) {
             this._stackId = template.data.stackId;
-            this._isModal = template.data.isModal;
+            this._isModal = !!template.data.isModal;
             this._className = template.data.className;
-
+            this._canBeClosed = template.data.canBeClosed !== false;
         }
     }
 
@@ -55,15 +56,19 @@ export class NavigationStack {
         //}
     }
 
-    isModal(){
+    canBeClosed() {
+        return this._canBeClosed;
+    }
+
+    isModal() {
         return this._isModal;
     }
 
-    stackId(){
+    stackId() {
         return this._stackId;
     }
 
-    className(){
+    className() {
         return this._className;
     }
 
@@ -92,13 +97,13 @@ export class NavigationStack {
         this.updateURL();
     }
 
-    updateURL(){
+    updateURL() {
         var topItem = this._navigationStack[this._navigationStack.length - 1],
             path = "",
             otherStack = undefined;
 
-        if( !topItem ){
-            otherStack = _.find(NavComponents.navigationStacks.list, function(s){
+        if (!topItem) {
+            otherStack = _.find(NavComponents.navigationStacks.list, function (s) {
                 return s !== this;
             }, this);
             path = otherStack && otherStack.getTopNavigationItem().getPath();
@@ -106,7 +111,7 @@ export class NavigationStack {
             path = topItem.getPath();
         }
 
-        if( typeof IronLocation !== 'undefined' && path){
+        if (typeof IronLocation !== 'undefined' && path) {
             IronLocation.pushState({}, "", path, true);
         }
     }
@@ -119,7 +124,7 @@ export class NavigationStack {
         var t,
             el = this._template.firstNode,
             transitions = {
-                'WebkitTransition': 'webkitTransitionEnd',
+                'WebkitTransition': 'webkitAnimationEnd',
                 'MozTransition': 'transitionend',
                 'MSTransition': 'msTransitionEnd',
                 'OTransition': 'oTransitionEnd',
@@ -141,9 +146,11 @@ export class NavigationStack {
                 popTo: "navigation-item__pop-to"
             },
             classToAdd = "",
-            EVENTS = "webkitAnimationEnd " + this._whichTransitionEvent(),
+            transitionEndEvent = _whichTransitionEvent();
             navigationStack = this,
             hooks = {};
+
+
 
 
         hooks.insertElement = function (node, next) {
@@ -153,14 +160,11 @@ export class NavigationStack {
             $(navigationStack._template.firstNode).append(node);
 
             if (!navigationStack.firstTime) {
-                node.addEventListener('webkitAnimationEnd', function () {
+                node.addEventListener(transitionEndEvent, function () {
                     $(node).removeClass(classToAdd);
                 });
-                $(node)
-                    .addClass(classToAdd);
-
+                $(node).addClass(classToAdd);
             }
-            //}
 
             Deps.afterFlush(function () {
                 $(node).width();
@@ -171,10 +175,12 @@ export class NavigationStack {
             classToAdd = "navigation-item__animated " + classToAdd;
 
             if (!navigationStack.firstTime) {
-                node.addEventListener('webkitAnimationEnd', function () {
+                node.addEventListener(transitionEndEvent, function () {
+                    console.log('remove after', transitionEndEvent);
                     $(node).remove();
                 });
                 $(node).addClass(classToAdd);
+                console.log(classToAdd)
             } else {
                 $(node).remove();
             }
@@ -193,12 +199,15 @@ export class NavigationStack {
             itemData = { navigationItem, navigationStack, data },
             currentDOMElement = template.find('.navigation-item');
 
-        if( currentDOMElement ){
-            currentDOMElement.remove();
+        if (this._topRenderedTemplate) {
+            Blaze.remove(this._topRenderedTemplate);
         }
         if (navigationItem) {
             this._topRenderedTemplate = navigationItem.render(itemData, this.getContentDomNode());
         }
+
+        this.firstTime = false;
+
     }
 
     getSize() {
@@ -212,7 +221,7 @@ export var NavComponents = {
         list: []
     },
 
-    stackWithId: function(stackId){
+    stackWithId: function (stackId) {
         return this.navigationStacks.map[stackId];
     }
 };
@@ -232,7 +241,7 @@ Template.navigationStack.destroyed = function () {
     console.log(stackId, "destroyed instance of navigation stack");
 
     delete NavComponents.navigationStacks.map[stackId];
-    if( index !== -1 ){
+    if (index !== -1) {
         NavComponents.navigationStacks.list.splice(index, 1);
     }
 

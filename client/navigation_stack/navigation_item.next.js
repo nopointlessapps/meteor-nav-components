@@ -7,7 +7,7 @@ Template.navigationItem.helpers({
 			navigationItem = instance.data.navigationItem;
 
 		if (navigationItem instanceof NavigationItem && navigationItem.getNavigationStack() !== undefined) {
-			return navigationItem.getNavigationStack().getSize() > 1 || navigationItem.getNavigationStack().isModal();
+			return navigationItem.getNavigationStack().getSize() > 1 || navigationItem.getNavigationStack().isModal() && navigationItem.getNavigationStack().canBeClosed();
 		}
 		return false;
 	},
@@ -71,12 +71,12 @@ Template.navigationItem.helpers({
 
 
 
-    'isModal': function () {
+    'lastInModal': function () {
         var instance = UI._templateInstance(),
             navigationItem = instance.data.navigationItem;
 
         if (navigationItem instanceof NavigationItem && navigationItem.getNavigationStack() !== undefined) {
-            return navigationItem.getNavigationStack().isModal();
+            return navigationItem.getNavigationStack().isModal() && navigationItem.getNavigationStack().getSize() === 1;
         }
     },
 

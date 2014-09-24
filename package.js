@@ -40,7 +40,12 @@ Package.on_use(function (api) {
 
         'client/tabbar/tabbar_item.styl',
         'client/tabbar/tabbar_item.html',
-        'client/tabbar/tabbar_item.next.js'
+        'client/tabbar/tabbar_item.next.js',
+
+        'client/modal_wrapper/modal_wrapper.jade',
+        'client/modal_wrapper/modal_wrapper.styl'
+
+
     ], 'client');
 
 });
