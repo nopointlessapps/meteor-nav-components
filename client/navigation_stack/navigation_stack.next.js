@@ -146,7 +146,7 @@ export class NavigationStack {
                 popTo: "navigation-item__pop-to"
             },
             classToAdd = "",
-            transitionEndEvent = _whichTransitionEvent();
+            transitionEndEvent = this._whichTransitionEvent(),
             navigationStack = this,
             hooks = {};
 
