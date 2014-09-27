@@ -1,0 +1,85 @@
+@import "../flexbox"
+
+.navigation-item {
+  flexbox();
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  opacity: 1;
+
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  overflow: hidden;
+  transform: translate3d(0, 0, 0);
+  transform-style: preserve-3d;
+}
+
+
+.navigation-item__content {
+  flex(1 100%);
+}
+
+.navigation-item__animated {
+  z-index: 1;
+}
+
+/* move from / to  */
+animate(keyframe){
+	-webkit-animation: keyframe .3s ease both;
+	animation: keyframe .3s ease both;
+}
+
+.navigation-item__push-from {
+	animate(moveToLeft);
+}
+
+.navigation-item__pop-to {
+  animate(moveFromLeft);
+}
+
+.navigation-item__pop-from {
+  animate(moveToRight);
+}
+
+.navigation-item__push-to  {
+  animate(moveFromRight);
+}
+
+/********************************* keyframes **************************************/
+translate(val){
+  -webkit-transform: translateX(val);
+  transform: translateX(val);
+}
+
+/* move from / to  */
+transformFrom(val) {
+	from {
+translate(val);
+  }
+}
+
+transformTo(val){
+  from { }
+	to {
+translate(val);
+  }
+}
+
+@keyframes moveToLeft {
+  transformTo(-100%);
+}
+
+@keyframes moveFromLeft {
+  transformFrom(-100%);
+}
+
+@keyframes moveToRight {
+  transformTo(100%);
+}
+
+@keyframes moveFromRight {
+  transformFrom(100%);
+}
+

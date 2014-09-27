@@ -1,0 +1,49 @@
+@import "../flexbox"
+
+.navigation-item-action-bar {
+  flex(0 0 40px);
+  flexbox();
+  flex-direction(columns);
+}
+
+.navigation-item-action-bar__back-button {
+  height: 100%;
+  display: block;
+
+  > svg {
+    width: 20px;
+    height: 20px;
+    padding-top: 8px;
+  }
+}
+
+.navigation-item-action-bar__actions {
+  flex(0 80px);
+  flexbox();
+
+  flex-align-items center;
+
+  > a {
+    padding: 0px 10px;
+    cursor: pointer;
+
+    > * {
+      pointer-events: none;
+    }
+  }
+}
+
+.navigation-item-action-bar__actions-left {
+  flex-justify-content flex-start;
+}
+
+.navigation-item-action-bar__actions-right {
+  flex-justify-content flex-end;
+}
+
+
+.navigation-item-action-bar__title {
+  flex(1);
+  text-align: center;
+}
+
