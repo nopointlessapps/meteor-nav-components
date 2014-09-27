@@ -1,7 +1,7 @@
 Package.describe({
-    summary: 'Basic navigation components for mobile',
+    summary: 'Basic navigation components',
     version: "1.0.0",
-    git: "https://github.com/npa.io/navigation-components.git"
+    git: "https://github.com/nopointlessapps/meteor-nav-components"
 });
 
 Package.on_use(function (api) {
