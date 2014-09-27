@@ -7,7 +7,7 @@ Template.navigationItem.helpers({
 			navigationItem = instance.data.navigationItem;
 
 		if (navigationItem instanceof NavigationItem && navigationItem.getNavigationStack() !== undefined) {
-			return navigationItem.getNavigationStack().getSize() > 1;
+			return navigationItem.getNavigationStack().getSize() > 1 || navigationItem.getNavigationStack().isModal() && navigationItem.getNavigationStack().canBeClosed();
 		}
 		return false;
 	},
@@ -40,16 +40,19 @@ Template.navigationItem.helpers({
 		return navigationItem && navigationItem.actionButtons();
 	},
 
-	isLoading: function () {
+    data: function () {
 		var instance = UI._templateInstance(),
-			navigationItem = instance.data.navigationItem,
-			template = navigationItem && navigationItem.getTemplate();
+			navigationItem = instance.data.navigationItem;
 
-		if (template && typeof template.isLoading === "function") {
-			return template.isLoading();
-		}
-		return !Router.current().ready();
+		return navigationItem && navigationItem.data();
 	},
+
+    ready: function(){
+        var instance = UI._templateInstance(),
+            navigationItem = instance.data.navigationItem;
+
+        return navigationItem && navigationItem.ready();
+    },
 
 	loadingTemplate: function () {
 		if (Router.options.loadingTemplate) {
@@ -66,22 +69,28 @@ Template.navigationItem.helpers({
         return template && typeof template.navigationItemClass === 'function' && template.navigationItemClass() || null;
     },
 
-    'isModal': function () {
-        var instance = UI._templateInstance(),
-            navigationItem = instance.data.navigationItem,
-            template = navigationItem && navigationItem.getTemplate();
 
-        return template && typeof template.isModal === 'function' && template.isModal();
+
+    'lastInModal': function () {
+        var instance = UI._templateInstance(),
+            navigationItem = instance.data.navigationItem;
+
+        if (navigationItem instanceof NavigationItem && navigationItem.getNavigationStack() !== undefined) {
+            return navigationItem.getNavigationStack().isModal() && navigationItem.getNavigationStack().getSize() === 1;
+        }
     },
 
     'isModalClass': function () {
         var instance = UI._templateInstance(),
-            navigationItem = instance.data.navigationItem,
-            template = navigationItem && navigationItem.getTemplate();
+            navigationItem = instance.data.navigationItem;
 
-        return template && typeof template.isModal === 'function' && template.isModal() && "navigation-item--is-modal" || null;
+        if (navigationItem instanceof NavigationItem && navigationItem.getNavigationStack() !== undefined) {
+            return navigationItem.getNavigationStack().isModal();
+        }
     }
 });
+
+
 
 Template.navigationItem.events({
 
@@ -89,7 +98,7 @@ Template.navigationItem.events({
 		e.preventDefault();
 		e.stopPropagation();
 
-		var stack = template.data.navigationItem.getNavigationStack();
+        var stack = template.data.navigationItem.getNavigationStack();
 		stack && stack.pop();
 	},
 

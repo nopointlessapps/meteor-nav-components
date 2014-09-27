@@ -1,12 +1,20 @@
 /*global Deps, Template, NavigationItem, UI, $, IronLocation */
 
-class NavigationStack {
+export class NavigationStack {
 
     constructor(template) {
         this._navigationStack = [];
         this._navigationDeps = new Deps.Dependency();
         this._template = template;
         this._initialRender = true;
+        this._canBeClosed = true;
+
+        if (template.data) {
+            this._stackId = template.data.stackId;
+            this._isModal = !!template.data.isModal;
+            this._className = template.data.className;
+            this._canBeClosed = template.data.canBeClosed !== false;
+        }
     }
 
     setStack(newStack = [], firstTime = false) {
@@ -48,24 +56,69 @@ class NavigationStack {
         //}
     }
 
+    canBeClosed() {
+        return this._canBeClosed;
+    }
+
+    isModal() {
+        return this._isModal;
+    }
+
+    stackId() {
+        return this._stackId;
+    }
+
+    className() {
+        return this._className;
+    }
+
     push(navigationItem) {
+        var topitem = this.getTopNavigationItem();
+
         this.isPopping = false;
+
+        navigationItem.setNavigationStack(this);
         this._navigationStack.push(navigationItem);
-        navigationItem.setNaviggetTopNavigationItemationStack(this);
+
+        this.renderStack();
         this._navigationDeps.changed();
+        this.updateURL();
+    }
+
+    getContentDomNode() {
+        return this._template.find('.navigation-stack__container');
     }
 
     pop() {
-        var topitem = this.getTopNavigationItem(), //navigationItem = this._navigationStack.pop(),
-            newTopItem = this._navigationStack[this._navigationStack.length - 2]; //getTopNavigationItem();
+        this.isPopping = true;
+        this._navigationStack.pop();
 
-        topitem.getRenderedTemplate().firstNode().classList.add('popping');
+        this.renderStack();
+        this.updateURL();
 
-        IronLocation.pushState({}, "", newTopItem.getPath()); //TODO should this be done better? Seems hacky - jdj_dk
+
+    }
+
+    updateURL() {
+        var topItem = this._navigationStack[this._navigationStack.length - 1],
+            path = "",
+            otherStack = undefined;
+
+        if (!topItem) {
+            otherStack = _.find(NavComponents.navigationStacks.list, function (s) {
+                return s !== this;
+            }, this);
+            path = otherStack && otherStack.getTopNavigationItem().getPath();
+        } else {
+            path = topItem.getPath();
+        }
+
+        if (typeof IronLocation !== 'undefined' && path) {
+            IronLocation.pushState({}, "", path, true);
+        }
     }
 
     getTopNavigationItem() {
-        //this._navigationDeps.depend();
         return this._navigationStack[this._navigationStack.length - 1] || null;
     }
 
@@ -73,7 +126,7 @@ class NavigationStack {
         var t,
             el = this._template.firstNode,
             transitions = {
-                'WebkitTransition': 'webkitTransitionEnd',
+                'WebkitTransition': 'webkitAnimationEnd',
                 'MozTransition': 'transitionend',
                 'MSTransition': 'msTransitionEnd',
                 'OTransition': 'oTransitionEnd',
@@ -95,7 +148,7 @@ class NavigationStack {
                 popTo: "navigation-item__pop-to"
             },
             classToAdd = "",
-            EVENTS = "webkitAnimationEnd " + this._whichTransitionEvent(),
+            transitionEndEvent = this._whichTransitionEvent(),
             navigationStack = this,
             hooks = {};
 
@@ -107,14 +160,11 @@ class NavigationStack {
             $(navigationStack._template.firstNode).append(node);
 
             if (!navigationStack.firstTime) {
-                node.addEventListener('webkitAnimationEnd', function () {
+                node.addEventListener(transitionEndEvent, function () {
                     $(node).removeClass(classToAdd);
                 });
-                $(node)
-                    .addClass(classToAdd);
-
+                $(node).addClass(classToAdd);
             }
-            //}
 
             Deps.afterFlush(function () {
                 $(node).width();
@@ -125,10 +175,12 @@ class NavigationStack {
             classToAdd = "navigation-item__animated " + classToAdd;
 
             if (!navigationStack.firstTime) {
-                node.addEventListener('webkitAnimationEnd', function () {
+                node.addEventListener(transitionEndEvent, function () {
+                    console.log('remove after', transitionEndEvent);
                     $(node).remove();
                 });
                 $(node).addClass(classToAdd);
+                console.log(classToAdd)
             } else {
                 $(node).remove();
             }
@@ -142,20 +194,19 @@ class NavigationStack {
         var template = this._template,
             navigationStack = template._navigationStack,
             navigationItem = this.getTopNavigationItem(),
-            container = null,
             data = Router.current().data(),
             itemData = { navigationItem, navigationStack, data };
 
-        if (navigationItem) {
-            if (this._topRenderedTemplate) {
-                UI.remove(this._topRenderedTemplate)
-            }
-            container = template.find(".navigation-stack__container");
-            $(template.find(".container > .navigation-item")).remove();
-
-            this._topRenderedTemplate = navigationItem.render(itemData, template.find(".navigation-stack__container"));
-
+        if (this._topRenderedTemplate) {
+            Blaze.remove(this._topRenderedTemplate);
         }
+
+        if (navigationItem) {
+            this._topRenderedTemplate = navigationItem.render(itemData, this.getContentDomNode());
+        }
+
+        this.firstTime = false;
+
     }
 
     getSize() {
@@ -163,22 +214,49 @@ class NavigationStack {
     }
 }
 
+export var NavComponents = {
+    navigationStacks: {
+        map: {},
+        list: []
+    },
+
+    stackWithId: function (stackId) {
+        return this.navigationStacks.map[stackId];
+    }
+};
 
 Template.navigationStack.created = function () {
     this._navigationStack = new NavigationStack(this);
+    var stackId = this._navigationStack.stackId();
+    console.log(stackId, "created new instance of navigation stack");
+
+    NavComponents.navigationStacks.map[stackId] = this._navigationStack;
+    NavComponents.navigationStacks.list.push(this._navigationStack);
+};
+
+Template.navigationStack.destroyed = function () {
+    var stackId = this._navigationStack.stackId(),
+        index = _.indexOf(NavComponents.navigationStacks.list, this._navigationStack);
+    console.log(stackId, "destroyed instance of navigation stack");
+
+    delete NavComponents.navigationStacks.map[stackId];
+    if (index !== -1) {
+        NavComponents.navigationStacks.list.splice(index, 1);
+    }
+
 };
 
 Template.navigationStack.rendered = function () {
     var that = this,
-        firstTime = true;
-
+        firstTime = true,
+        {stackId} = this.data || {};
 
     this.autorun(function () {
         var navigationStackFn = Router.current().route.navigationStack,
             navigationStack = [];
 
         if (typeof navigationStackFn === 'function') {
-            navigationStack = navigationStackFn();
+            navigationStack = navigationStackFn(stackId);
             if (navigationStack && navigationStack.length > 0) {
                 var renderStack = navigationStack.map((t) => {
                     return new NavigationItem(t);
@@ -216,6 +294,20 @@ Template.navigationStack.helpers({
         return Router.current().data();
     },
 
+    stackId: function () {
+        var instance = UI._templateInstance();
+        if (instance && instance._navigationStack) {
+            return instance._navigationStack.stackId();
+        }
+    },
+
+    className: function () {
+        var instance = UI._templateInstance();
+        if (instance && instance._navigationStack) {
+            return instance._navigationStack.className();
+        }
+    },
+
     topNavigationItem: function () {
         var instance = UI._templateInstance();
         if (instance && instance._navigationStack) {
@@ -232,4 +324,4 @@ Template.navigationStack.events({
 
 });
 
-export var NavigationStack;
+

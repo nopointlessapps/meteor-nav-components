@@ -5,10 +5,14 @@
 
                 {{#if backButtonVisible}}
                 <a href="" class="navigation-item-action-bar__back-button">
-                    {{#if isModal}}
+                    {{#if lastInModal}}
                         Cancel
                     {{else}}
-                        {{>icon name='back-arrow'}}
+                        {{#if backButtonTitle}}
+                            {{backButtonTitle}}
+                        {{else}}
+                            {{>icon name='back-arrow'}}
+                        {{/if}}
                     {{/if}}
                 </a>
                 {{/if}}
@@ -29,10 +33,10 @@
 
         </div>
         <div class="navigation-item__content">
-            {{#if isLoading}}
-            {{> UI.dynamic template=loadingTemplate}}
+            {{#if ready}}
+            {{> UI.dynamic template=templateName data=data}}
             {{else}}
-            {{> UI.dynamic template=templateName data=this}}
+            {{> UI.dynamic template=loadingTemplate}}
             {{/if}}
         </div>
     </div>
