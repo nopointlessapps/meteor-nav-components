@@ -95,6 +95,8 @@ export class NavigationStack {
 
         this.renderStack();
         this.updateURL();
+
+
     }
 
     updateURL() {
@@ -151,8 +153,6 @@ export class NavigationStack {
             hooks = {};
 
 
-
-
         hooks.insertElement = function (node, next) {
             classToAdd = navigationStack.isPopping && classes.popTo || classes.pushTo;
             classToAdd = "navigation-item__animated " + classToAdd;
@@ -194,14 +194,13 @@ export class NavigationStack {
         var template = this._template,
             navigationStack = template._navigationStack,
             navigationItem = this.getTopNavigationItem(),
-            container = null,
             data = Router.current().data(),
-            itemData = { navigationItem, navigationStack, data },
-            currentDOMElement = template.find('.navigation-item');
+            itemData = { navigationItem, navigationStack, data };
 
         if (this._topRenderedTemplate) {
             Blaze.remove(this._topRenderedTemplate);
         }
+
         if (navigationItem) {
             this._topRenderedTemplate = navigationItem.render(itemData, this.getContentDomNode());
         }
