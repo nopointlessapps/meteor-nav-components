@@ -7,7 +7,7 @@
   background: rgba(0, 0, 0, 0.5);
   transform: translate3d(0, 0, 0);
   transform-style: preserve-3d;
-
+  display: none;
 
   > div:first-child {
     background: #F1F1F1;
@@ -22,8 +22,8 @@
       max-width: 600px;
     }
   }
+}
 
-  &:empty {
-    display: none;
-  }
+.nav-components__modal-wrapper--visible {
+  display: block;
 }

@@ -11,9 +11,9 @@ export class NavigationStack {
 
         if (template.data) {
             this._stackId = template.data.stackId;
-            this._isModal = !!template.data.isModal;
             this._className = template.data.className;
             this._canBeClosed = template.data.canBeClosed !== false;
+            this._modalWrapper = template.data.modalWrapper;
         }
     }
 
@@ -61,7 +61,7 @@ export class NavigationStack {
     }
 
     isModal() {
-        return this._isModal;
+        return this._modalWrapper !== undefined;
     }
 
     stackId() {
@@ -206,6 +206,14 @@ export class NavigationStack {
         }
 
         this.firstTime = false;
+
+        if( this._modalWrapper ) {
+            if (this.getSize() === 0) {
+                document.getElementById(this._modalWrapper).classList.remove('nav-components__modal-wrapper--visible');
+            } else {
+                document.getElementById(this._modalWrapper).classList.add('nav-components__modal-wrapper--visible');
+            }
+        }
 
     }
 

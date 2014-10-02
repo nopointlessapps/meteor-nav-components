@@ -18,7 +18,7 @@
 }
 
 .navigation-item-action-bar__actions {
-  flex(0 80px);
+  flex(1);
   flexbox();
 
   flex-align-items center;
@@ -31,6 +31,10 @@
       pointer-events: none;
     }
   }
+
+  &:empty {
+    display: none;
+  }
 }
 
 .navigation-item-action-bar__actions-left {
@@ -41,9 +45,8 @@
   flex-justify-content flex-end;
 }
 
-
 .navigation-item-action-bar__title {
-  flex(1);
+  flex(1 100%);
   text-align: center;
 }
 
