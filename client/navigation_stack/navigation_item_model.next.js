@@ -12,7 +12,7 @@ class NavigationItem {
         this._dataFn = options.data;
 
         if (this._path === undefined || this._path === null) {
-            console.error("NavigationItem requires a path");
+            console.log("NavigationItem requires a path");
         }
 
         this._checkIfReady();
@@ -108,7 +108,7 @@ class NavigationItem {
             this._buttonsMap = {};
             _.forEach(this._actionButtons, function (item) {
                 if (item.identifier && typeof item.command === 'function') {
-                    that._buttonsMap[item.identifier] = item.command;
+                    that._buttonsMap[item.identifier] = item;
                 }
             });
 
@@ -117,8 +117,9 @@ class NavigationItem {
     }
 
     executeCommand(identifier) {
-        var command = this._buttonsMap && this._buttonsMap[identifier];
-        command && command();
+        var button = this._buttonsMap && this._buttonsMap[identifier],
+            command = button && button.command;
+        command && command.apply(button.scope);
     }
 
     render(data, parentNode) {
@@ -137,6 +138,10 @@ class NavigationItem {
 
     equals(item) {
         return item.getPath() === this.getPath() && item.getTemplate() === this.getTemplate();
+    }
+
+    modal(){
+        return this.getNavigationStack().modal();
     }
 }
 

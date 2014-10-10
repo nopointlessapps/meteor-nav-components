@@ -1,9 +1,6 @@
 @import "../flexbox"
 
-
 .tabbar__content-container {
-  flex(1);
-
   > * {
     position: absolute;
     height: 100%;
@@ -11,12 +8,13 @@
   }
 }
 
-
 .tabbar__items {
-  flex(0 0 60px);
-  flexbox();  
-
   padding: 0px;
   margin: 0px;
+  text-align: center;
+}
 
+.tabbar__items-container {
+  display: inline-block;
+  padding-top: 5px;
 }

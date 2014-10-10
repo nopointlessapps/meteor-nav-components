@@ -13,7 +13,7 @@ Package.on_use(function (api) {
         'underscore',
         'templating',
         'handlebars',
-        'mquandalle:harmony@1.3.44',
+        'mquandalle:harmony',
         'stylus',
         'iron:router@0.9.3',
         'waitingkuo:jade@0.2.8'

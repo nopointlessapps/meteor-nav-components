@@ -4,17 +4,21 @@
             <div class="navigation-item-action-bar__actions navigation-item-action-bar__actions-left">
 
                 {{#if backButtonVisible}}
+
+                {{#if lastInModal}}
+                <a href="" class="navigation-item-action-bar__close-modal-button">
+                Cancel
+                    </a>
+                {{else}}
                 <a href="" class="navigation-item-action-bar__back-button">
-                    {{#if lastInModal}}
-                        Cancel
+                    {{#if backButtonTitle}}
+                    {{backButtonTitle}}
                     {{else}}
-                        {{#if backButtonTitle}}
-                            {{backButtonTitle}}
-                        {{else}}
-                            {{>icon name='back-arrow'}}
-                        {{/if}}
+                    {{>icon name='back-arrow'}}
                     {{/if}}
                 </a>
+                {{/if}}
+
                 {{/if}}
             </div>
             <h2 class="navigation-item-action-bar__title">{{title}}</h2>

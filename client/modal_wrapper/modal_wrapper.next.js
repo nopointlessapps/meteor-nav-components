@@ -1,9 +1,37 @@
-var ModalWrapper = function(template){
+var ModalWrapper = function (template) {
+    this._template = template;
     this._data = template.data;
+    this._domElement = new ReactiveVar();
 }
 
-ModalWrapper.prototype.id = function(){
+ModalWrapper.prototype.setDomElement = function setDomElement(domElement) {
+    this._domElement.set(domElement);
+}
+
+ModalWrapper.prototype.domElement = function domElement() {
+    return this._domElement.get();
+}
+
+ModalWrapper.prototype.id = function () {
     return this._data && this._data.wrapperId;
+}
+
+ModalWrapper.prototype.setNavigationStack = function (stack) {
+    this._navigationStack = stack;
+}
+
+ModalWrapper.prototype.hide = function hideModal() {
+    var that = this;
+    if (that.domElement()) {
+        that.domElement().classList.remove('nav-components__modal-wrapper--visible');
+    }
+}
+
+ModalWrapper.prototype.show = function showModal() {
+    var that = this;
+    if (that.domElement()) {
+        that.domElement().classList.add('nav-components__modal-wrapper--visible');
+    }
 }
 
 
@@ -19,16 +47,18 @@ NavComponents.modalWrapperWithId = function (id) {
 Template.modalWrapper.created = function () {
     this._wrapper = new ModalWrapper(this);
     var id = this._wrapper.id();
-    console.log(id, "created new instance of modal wrapper");
 
     NavComponents.modalWrappers.map[id] = this._wrapper;
     NavComponents.modalWrappers.list.push(this._wrapper);
 };
 
+Template.modalWrapper.rendered = function () {
+    this._wrapper.setDomElement(this.firstNode);
+}
+
 Template.modalWrapper.destroyed = function () {
     var id = this._wrapper.id(),
         index = _.indexOf(NavComponents.modalWrappers.list, this._wrapper);
-    console.log(id, "destroyed instance of modal wrapper");
 
     delete NavComponents.modalWrappers.map[id];
     if (index !== -1) {
@@ -38,7 +68,7 @@ Template.modalWrapper.destroyed = function () {
 };
 
 Template.modalWrapper.helpers({
-    id: function(){
+    id: function () {
         var instance = Template.instance();
         return instance._wrapper.id();
     }
