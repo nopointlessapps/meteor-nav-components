@@ -94,13 +94,22 @@ Template.navigationItem.helpers({
 
 Template.navigationItem.events({
 
-	"click .navigation-item-action-bar__back-button": function (e, template) {
-		e.preventDefault();
-		e.stopPropagation();
+    "click .navigation-item-action-bar__back-button": function (e, template) {
+        e.preventDefault();
+        e.stopPropagation();
 
         var stack = template.data.navigationItem.getNavigationStack();
-		stack && stack.pop();
-	},
+        stack && stack.pop();
+    },
+
+    "click .navigation-item-action-bar__close-modal-button": function (e, template) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        var stack = template.data.navigationItem.getNavigationStack();
+        stack && stack.pop().modal().hide();
+    },
+
 
 	"click .navigation-item-action-bar__actions > a": function (e, template) {
 		var identifier = "",

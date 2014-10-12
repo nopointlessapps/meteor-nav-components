@@ -15,8 +15,8 @@ Package.on_use(function (api) {
         'handlebars',
         'mquandalle:harmony',
         'stylus',
-        'iron:router',
-        'waitingkuo:jade'
+        'iron:router@0.9.3',
+        'waitingkuo:jade@0.2.8'
     ], 'client');
 
     api.add_files([
@@ -43,6 +43,7 @@ Package.on_use(function (api) {
         'client/tabbar/tabbar_item.next.js',
 
         'client/modal_wrapper/modal_wrapper.jade',
+        'client/modal_wrapper/modal_wrapper.next.js',
         'client/modal_wrapper/modal_wrapper.styl'
 
 

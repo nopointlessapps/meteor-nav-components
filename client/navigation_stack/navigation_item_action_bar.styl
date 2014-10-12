@@ -1,10 +1,13 @@
 @import "../flexbox"
 
+$navigation-item-action-bar__top-margin = 5px;
+$navigation-item-action-bar__side-margin  = 5px;
+
 .navigation-item-action-bar {
-  flex(0 0 40px);
-  flexbox();
-  flex-direction(columns);
+  position: relative;
+  min-height: 45px;
 }
+
 
 .navigation-item-action-bar__back-button {
   height: 100%;
@@ -18,32 +21,43 @@
 }
 
 .navigation-item-action-bar__actions {
-  flex(0 80px);
-  flexbox();
-
-  flex-align-items center;
+  position: absolute;
+  z-index: 2;
 
   > a {
-    padding: 0px 10px;
     cursor: pointer;
+    display: inline-block;
+    height: 30px;
 
     > * {
       pointer-events: none;
     }
   }
+
+  &:empty {
+    display: none;
+  }
 }
 
 .navigation-item-action-bar__actions-left {
-  flex-justify-content flex-start;
+  top: $navigation-item-action-bar__top-margin;
+  left: $navigation-item-action-bar__side-margin;
 }
 
 .navigation-item-action-bar__actions-right {
-  flex-justify-content flex-end;
+  top: $navigation-item-action-bar__top-margin;
+  right: $navigation-item-action-bar__side-margin;
+
+  > a {
+    margin-right: 10px;
+
+    &:last-of-type {
+      margin-right: 0;
+    }
+  }
 }
 
-
 .navigation-item-action-bar__title {
-  flex(1);
   text-align: center;
 }
 

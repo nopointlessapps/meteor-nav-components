@@ -11,9 +11,13 @@ export class NavigationStack {
 
         if (template.data) {
             this._stackId = template.data.stackId;
-            this._isModal = !!template.data.isModal;
             this._className = template.data.className;
             this._canBeClosed = template.data.canBeClosed !== false;
+            this._modalWrapper = template.data.modalWrapper;
+
+            if (this._modalWrapper) {
+                this._modalWrapper = NavComponents.modalWrapperWithId(this._modalWrapper);
+            }
         }
     }
 
@@ -49,11 +53,7 @@ export class NavigationStack {
 
         this.firstTime = firstTime || (!this.isPopping && this._navigationStack.length === 1 );// || this._navigationStack.length === 0;
 
-
         this._navigationDeps.changed();
-
-        console.log("navstack changed");
-        //}
     }
 
     canBeClosed() {
@@ -61,7 +61,11 @@ export class NavigationStack {
     }
 
     isModal() {
-        return this._isModal;
+        return this._modalWrapper !== undefined;
+    }
+
+    modal() {
+        return this._modalWrapper;
     }
 
     stackId() {
@@ -83,7 +87,10 @@ export class NavigationStack {
         this.renderStack();
         this._navigationDeps.changed();
         this.updateURL();
+
+        return this;
     }
+
 
     getContentDomNode() {
         return this._template.find('.navigation-stack__container');
@@ -91,12 +98,13 @@ export class NavigationStack {
 
     pop() {
         this.isPopping = true;
+
         this._navigationStack.pop();
 
         this.renderStack();
         this.updateURL();
 
-
+        return this;
     }
 
     updateURL() {
@@ -269,6 +277,9 @@ Template.navigationStack.rendered = function () {
 
                 firstTime = false;
 
+                if (that._navigationStack.modal()) {
+                    that._navigationStack.modal().show();
+                }
             }
         }
     });
