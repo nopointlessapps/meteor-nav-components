@@ -107,6 +107,7 @@ class NavigationItem {
             this._actionButtons = buttons;
             this._buttonsMap = {};
             _.forEach(this._actionButtons, function (item) {
+                item.identifier = item.identifier || item.buttonTitle || item.iconName;
                 if (item.identifier && typeof item.command === 'function') {
                     that._buttonsMap[item.identifier] = item;
                 }
