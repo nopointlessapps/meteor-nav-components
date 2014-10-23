@@ -8,7 +8,7 @@ class NavigationItem {
         this._waitOn = options.waitOn;
         this._isReady = false;
         this._isReadyDeps = new Tracker.Dependency();
-
+        this._title = new ReactiveVar();
         this._dataFn = options.data;
 
         if (this._path === undefined || this._path === null) {
@@ -74,6 +74,14 @@ class NavigationItem {
             prefixLength = "Template.".length;
 
         return viewName.substr(prefixLength);
+    }
+
+    setTitle(title){
+        this._title.set(title);
+    }
+
+    title(){
+        return this._title.get();
     }
 
     setNavigationStack(stack) {

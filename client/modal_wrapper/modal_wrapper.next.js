@@ -54,6 +54,10 @@ Template.modalWrapper.created = function () {
 
 Template.modalWrapper.rendered = function () {
     this._wrapper.setDomElement(this.firstNode);
+
+    if( this.data.show === true ){
+        this._wrapper.show();
+    }
 }
 
 Template.modalWrapper.destroyed = function () {

@@ -14,10 +14,9 @@ Template.navigationItem.helpers({
 
 	title: function () {
 		var instance = UI._templateInstance(),
-			navigationItem = instance.data.navigationItem,
-			template = navigationItem && navigationItem.getTemplate();
+			navigationItem = instance.data.navigationItem;
 
-		return template && typeof template.title === 'function' && template.title() || null;
+		return navigationItem && navigationItem.title();
 	},
 
 	templateName: function () {
