@@ -1,7 +1,7 @@
 class NavigationItem {
 
     constructor(options = {}) {
-        console.log(options);
+
 
         this._template = options.template;
         this._path = options.path;
@@ -24,7 +24,7 @@ class NavigationItem {
     _checkIfReady() {
         var that = this;
 
-        Deps.autorun(function (c) {
+        Tracker.autorun(function (c) {
             var waitOn = that._waitOn,
                 isReady = true;
 
