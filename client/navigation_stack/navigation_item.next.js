@@ -1,129 +1,149 @@
 /*global UI, Deps, Template */
 
-Template.navigationItem.helpers({
+Template.navigationItem.helpers( {
 
-	backButtonVisible: function () {
+	backButtonVisible: function() {
 		var instance = UI._templateInstance(),
 			navigationItem = instance.data.navigationItem;
 
-		if (navigationItem instanceof NavigationItem && navigationItem.getNavigationStack() !== undefined) {
+		if( navigationItem instanceof NavigationItem && navigationItem.getNavigationStack() !== undefined ) {
 			return navigationItem.getNavigationStack().getSize() > 1 || navigationItem.getNavigationStack().isModal() && navigationItem.getNavigationStack().canBeClosed();
 		}
 		return false;
 	},
 
-	title: function () {
+	title: function() {
 		var instance = UI._templateInstance(),
-			navigationItem = instance.data.navigationItem,
-			template = navigationItem && navigationItem.getTemplate();
+			navigationItem = instance.data.navigationItem;
 
-		return template && typeof template.title === 'function' && template.title() || null;
+		return navigationItem && navigationItem.title();
 	},
 
-	templateName: function () {
+	templateName: function() {
 		var instance = UI._templateInstance(),
 			navigationItem = instance.data.navigationItem,
 			template = navigationItem && navigationItem.getTemplateName() || null;
 
-		if (template) {
-			if (template.indexOf('Template.') === 0) {
-				template = template.substr('Template.'.length);
+		if( template ) {
+			if( template.indexOf( 'Template.' ) === 0 ) {
+				template = template.substr( 'Template.'.length );
 			}
 			return template;
 		}
 	},
 
-	actionButtons: function () {
+	actionButtons: function() {
 		var instance = UI._templateInstance(),
 			navigationItem = instance.data.navigationItem;
 
 		return navigationItem && navigationItem.actionButtons();
 	},
 
-    data: function () {
+	data: function() {
 		var instance = UI._templateInstance(),
 			navigationItem = instance.data.navigationItem;
 
 		return navigationItem && navigationItem.data();
 	},
 
-    ready: function(){
-        var instance = UI._templateInstance(),
-            navigationItem = instance.data.navigationItem;
+	ready: function() {
+		var instance = UI._templateInstance(),
+			navigationItem = instance.data.navigationItem;
 
-        return navigationItem && navigationItem.ready();
-    },
+		return navigationItem && navigationItem.ready();
+	},
 
-	loadingTemplate: function () {
-		if (Router.options.loadingTemplate) {
+	loadingTemplate: function() {
+		if( Router.options.loadingTemplate ) {
 			return Router.options.loadingTemplate;
 		}
 		return null;
 	},
 
-    'class': function () {
-        var instance = UI._templateInstance(),
-            navigationItem = instance.data.navigationItem,
-            template = navigationItem && navigationItem.getTemplate();
+	'class': function() {
+		var instance = UI._templateInstance(),
+			navigationItem = instance.data.navigationItem,
+			template = navigationItem && navigationItem.getTemplate();
 
-        return template && typeof template.navigationItemClass === 'function' && template.navigationItemClass() || null;
-    },
-
-
-
-    'lastInModal': function () {
-        var instance = UI._templateInstance(),
-            navigationItem = instance.data.navigationItem;
-
-        if (navigationItem instanceof NavigationItem && navigationItem.getNavigationStack() !== undefined) {
-            return navigationItem.getNavigationStack().isModal() && navigationItem.getNavigationStack().getSize() === 1;
-        }
-    },
-
-    'isModalClass': function () {
-        var instance = UI._templateInstance(),
-            navigationItem = instance.data.navigationItem;
-
-        if (navigationItem instanceof NavigationItem && navigationItem.getNavigationStack() !== undefined) {
-            return navigationItem.getNavigationStack().isModal();
-        }
-    }
-});
+		return template && typeof template.navigationItemClass === 'function' && template.navigationItemClass() || null;
+	},
 
 
+	'lastInModal': function() {
+		var instance = UI._templateInstance(),
+			navigationItem = instance.data.navigationItem;
 
-Template.navigationItem.events({
+		if( navigationItem instanceof NavigationItem && navigationItem.getNavigationStack() !== undefined ) {
+			return navigationItem.getNavigationStack().isModal() && navigationItem.getNavigationStack().getSize() === 1;
+		}
+	},
 
-    "click .navigation-item-action-bar__back-button": function (e, template) {
-        e.preventDefault();
-        e.stopPropagation();
+	'isModalClass': function() {
+		var instance = UI._templateInstance(),
+			navigationItem = instance.data.navigationItem;
 
-        var stack = template.data.navigationItem.getNavigationStack();
-        stack && stack.pop();
-    },
+		if( navigationItem instanceof NavigationItem && navigationItem.getNavigationStack() !== undefined ) {
+			return navigationItem.getNavigationStack().isModal();
+		}
+	},
 
-    "click .navigation-item-action-bar__close-modal-button": function (e, template) {
-        e.preventDefault();
-        e.stopPropagation();
+	restoreScrollPosition: function() {
+		var instance = UI._templateInstance(),
+			navigationItem = instance.data.navigationItem;
 
-        var stack = template.data.navigationItem.getNavigationStack();
-        stack && stack.pop().modal().hide();
-    },
+		return navigationItem.restoreScrollPosition();
+	}
+} );
+
+Template.navigationItem.rendered = function() {
+	var that = this,
+		navigationItem = that.data.navigationItem;
+
+	this.autorun( function( c ) {
+		if( navigationItem.ready() ) {
+			c.stop();
+
+			Tracker.afterFlush( function() {
+				Tracker.afterFlush( function() { // TODO fix this hack
+					navigationItem.restoreScrollPosition();
+				} );
+			} );
+		}
+	} );
+}
+
+Template.navigationItem.events( {
+
+	"click .navigation-item-action-bar__back-button": function( e, template ) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		var stack = template.data.navigationItem.getNavigationStack();
+		stack && stack.pop();
+	},
+
+	"click .navigation-item-action-bar__close-modal-button": function( e, template ) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		var stack = template.data.navigationItem.getNavigationStack();
+		stack && stack.pop().modal().hide();
+	},
 
 
-	"click .navigation-item-action-bar__actions > a": function (e, template) {
+	"click .navigation-item-action-bar__actions > a": function( e, template ) {
 		var identifier = "",
 			navigationItem = template.data.navigationItem;
 
-		if (!e.target.href || e.target.href.trim().length === 0 || e.target.href.trim() === "#") {
+		if( !e.target.href || e.target.href.trim().length === 0 || e.target.href.trim() === "#" ) {
 			e.preventDefault();
 			e.stopPropagation();
 
-			identifier = e.target.getAttribute('data-identifier');
+			identifier = e.target.getAttribute( 'data-identifier' );
 			identifier = identifier && identifier.trim();
 
-			navigationItem.executeCommand(identifier);
+			navigationItem.executeCommand( identifier );
 		}
 	}
 
-});
+} );

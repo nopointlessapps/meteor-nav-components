@@ -3,45 +3,47 @@
         <div class="navigation-item-action-bar">
             <div class="navigation-item-action-bar__actions navigation-item-action-bar__actions-left">
 
-                {{#if backButtonVisible}}
+				{{#if backButtonVisible}}
 
-                {{#if lastInModal}}
-                <a href="" class="navigation-item-action-bar__close-modal-button">
-                Cancel
-                    </a>
-                {{else}}
-                <a href="" class="navigation-item-action-bar__back-button">
-                    {{#if backButtonTitle}}
-                    {{backButtonTitle}}
-                    {{else}}
-                    {{>icon name='back-arrow'}}
-                    {{/if}}
-                </a>
-                {{/if}}
+					{{#if lastInModal}}
+                        <a href="" class="navigation-item-action-bar__close-modal-button">
+                            Cancel
+                        </a>
+					{{else}}
+                        <a href="" class="navigation-item-action-bar__back-button">
+							{{#if backButtonTitle}}
+								{{backButtonTitle}}
+							{{else}}
+								{{>icon name='back-arrow'}}
+							{{/if}}
+                        </a>
+					{{/if}}
 
-                {{/if}}
+				{{/if}}
             </div>
             <h2 class="navigation-item-action-bar__title">{{title}}</h2>
 
             <div class="navigation-item-action-bar__actions navigation-item-action-bar__actions-right">
-                {{#each actionButtons}}
-                <a href="{{path}}" data-identifier="{{identifier}}">
-                    {{#if buttonTitle}}
-                        {{buttonTitle}}
-                    {{else}}
-                    {{> icon name=iconName}}
-                    {{/if}}
-                </a>
-                {{/each}}
+				{{#each actionButtons}}
+                    <a href="{{path}}" data-identifier="{{identifier}}">
+						{{#if buttonTitle}}
+							{{buttonTitle}}
+						{{else}}
+							{{> icon name=iconName}}
+						{{/if}}
+                    </a>
+				{{/each}}
             </div>
 
         </div>
         <div class="navigation-item__content">
-            {{#if ready}}
-            {{> UI.dynamic template=templateName data=data}}
-            {{else}}
-            {{> UI.dynamic template=loadingTemplate}}
-            {{/if}}
+			{{#if ready}}
+				{{> UI.dynamic template=templateName data=data}}
+			{{else}}
+				{{> UI.dynamic template=loadingTemplate}}
+			{{/if}}
         </div>
+
+
     </div>
 </template>

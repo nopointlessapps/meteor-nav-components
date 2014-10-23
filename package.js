@@ -15,7 +15,7 @@ Package.on_use(function (api) {
         'handlebars',
         'mquandalle:harmony',
         'stylus',
-        'iron:router@0.9.3',
+        'iron:router',
         'waitingkuo:jade@0.2.8'
     ], 'client');
 
