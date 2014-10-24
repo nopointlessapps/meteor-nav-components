@@ -78,7 +78,9 @@ export class NavigationStack {
 
     push(navigationItem) {
         var topitem = this.getTopNavigationItem();
-        topitem.storeScrollPosition();
+        if( topitem ) {
+            topitem.storeScrollPosition();
+        }
 
         this.isPopping = false;
 
