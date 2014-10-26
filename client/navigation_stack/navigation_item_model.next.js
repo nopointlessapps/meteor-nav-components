@@ -1,6 +1,8 @@
 class NavigationItem {
 
     constructor(options = {}) {
+
+
         this._template = options.template;
         this._path = options.path;
         this._renderDeps = new Tracker.Dependency();
@@ -21,9 +23,12 @@ class NavigationItem {
     _checkIfReady() {
         var that = this;
 
-        Deps.autorun(function (c) {
+        Tracker.autorun(function (c) {
             var waitOn = that._waitOn,
                 isReady = true;
+
+            console.log(waitOn);
+
             if (_.isArray(waitOn)) {
                 _.forEach(waitOn, function (item) {
                     if (isReady) {
@@ -60,6 +65,13 @@ class NavigationItem {
         }
     }
 
+    title(){
+        return this._title.get();
+    }
+
+    setTitle(title){
+        this._title.set(title);
+    }
 
     getPath() {
         return this._path;
@@ -106,6 +118,14 @@ class NavigationItem {
     actionButtons() {
         this._actionButtonsDeps.depend();
         return this._actionButtons;
+    }
+
+    storeScrollPosition(){
+        this._scrollPosition = $(this._renderedTemplate.firstNode().querySelector('.navigation-item__content')).scrollTop();
+    }
+
+    restoreScrollPosition(){
+        $(this._renderedTemplate.firstNode().querySelector('.navigation-item__content')).scrollTop(this._scrollPosition);
     }
 
     setActionButtons(buttons = []) {

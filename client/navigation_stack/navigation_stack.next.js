@@ -78,6 +78,9 @@ export class NavigationStack {
 
     push(navigationItem) {
         var topitem = this.getTopNavigationItem();
+        if( topitem ) {
+            topitem.storeScrollPosition();
+        }
 
         this.isPopping = false;
 
@@ -103,6 +106,8 @@ export class NavigationStack {
 
         this.renderStack();
         this.updateURL();
+
+        var topitem = this.getTopNavigationItem();
 
         return this;
     }
