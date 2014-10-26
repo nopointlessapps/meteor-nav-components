@@ -20,6 +20,10 @@ ModalWrapper.prototype.setNavigationStack = function (stack) {
     this._navigationStack = stack;
 }
 
+ModalWrapper.prototype.navigationStack = function () {
+    return this._navigationStack;
+}
+
 ModalWrapper.prototype.hide = function hideModal() {
     var that = this;
     if (that.domElement()) {
