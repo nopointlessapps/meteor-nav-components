@@ -1,41 +1,37 @@
-var ModalWrapper = function (template) {
-    this._template = template;
-    this._data = template.data;
-    this._domElement = new ReactiveVar();
-}
+function modalWrapperConstructor (template) {
+    var {data} = template,
+        currentDomElement = new ReactiveVar(),
+        currentNavigationStack = undefined,
 
-ModalWrapper.prototype.setDomElement = function setDomElement(domElement) {
-    this._domElement.set(domElement);
-}
+        setDomElement = function(newDomElement){
+            currentDomElement = newDomElement;
+        },
+        domElement = function(){
+            return currentDomElement
+        },
+        setNavigationStack = function(navigationStack){
+            currentNavigationStack = navigationStack;
+        },
+        navigationStack = function(){
+            return currentNavigationStack;
+        },
+        id = function(){
+            return data && data.wrapperId;
+        },
+        hide = function(){
+            if( !_.isUndefined(domElement()) ){
+                domElement().classList.remove('nav-components__modal-wrapper--visible')
+            }
+        },
+        show = function(){
+            if( !_.isUndefined(domElement()) ){
+                domElement().classList.add('nav-components__modal-wrapper--visible')
+            }
+        };
 
-ModalWrapper.prototype.domElement = function domElement() {
-    return this._domElement.get();
-}
-
-ModalWrapper.prototype.id = function () {
-    return this._data && this._data.wrapperId;
-}
-
-ModalWrapper.prototype.setNavigationStack = function (stack) {
-    this._navigationStack = stack;
-}
-
-ModalWrapper.prototype.navigationStack = function () {
-    return this._navigationStack;
-}
-
-ModalWrapper.prototype.hide = function hideModal() {
-    var that = this;
-    if (that.domElement()) {
-        that.domElement().classList.remove('nav-components__modal-wrapper--visible');
-    }
-}
-
-ModalWrapper.prototype.show = function showModal() {
-    var that = this;
-    if (that.domElement()) {
-        that.domElement().classList.add('nav-components__modal-wrapper--visible');
-    }
+    return {
+        setDomElement, domElement, setNavigationStack, navigationStack, id, hide, show
+    };
 }
 
 
@@ -49,7 +45,7 @@ NavComponents.modalWrapperWithId = function (id) {
 };
 
 Template.modalWrapper.created = function () {
-    this._wrapper = new ModalWrapper(this);
+    this._wrapper = modalWrapperConstructor(this);
     var id = this._wrapper.id();
 
     NavComponents.modalWrappers.map[id] = this._wrapper;

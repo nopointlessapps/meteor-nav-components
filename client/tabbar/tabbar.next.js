@@ -1,123 +1,135 @@
-class TabbarController {
+/*global Tracker */
 
-	constructor() {
-		this._itemsDeps = new Deps.Dependency();
-		this._selectedItemDeps = new Deps.Dependency();
-	}
+function tabbarController() {
+    var itemsDeps = new Tracker.Dependency(),
+        selectedItemDeps = new Tracker.Dependency(),
+        items = [],
+        selectedItemIndex = 0,
+        currentRenderedView = undefined,
 
-	setItems( items = [] ) {
-		var that = this,
-			selectedIndex = 0,
-			fixPath = function( path ) {
-				if( path[ path.length ] !== "/" ) {
-					path = path + "/";
-				}
-				return path;
-			};
+        setItems = function (newItems = []) {
+            var selectedIndex = 0,
+                fixPath = function (path) {
+                    if (path[path.length] !== "/") {
+                        path = path + "/";
+                    }
+                    return path;
+                };
 
-		this._items = items;
-		this._items.forEach( function( item, index ) {
-			var path = item.getPath(),
-				routerPath = Router.current().path;
+            items = newItems;
+            items.forEach(function (item, index) {
+                var path = item.getPath(),
+                    routerPath = Router.current().path;
 
-			if( typeof path === "string" ) {
-				path = fixPath( path );
-				routerPath = fixPath( routerPath );
+                if (typeof path === "string") {
+                    path = fixPath(path);
+                    routerPath = fixPath(routerPath);
 
-				item.setTabbarController( that );
-				if( routerPath.startsWith( path ) ) {
-					selectedIndex = index;
-				}
-			}
-		} );
+                    item.setTabbarController(publicFunctions);
+                    if (routerPath.startsWith(path)) {
+                        selectedIndex = index;
+                    }
+                }
+            });
 
+            itemsDeps.changed();
+            setSelectedItemIndex(selectedIndex, false);
+        },
 
-		this._itemsDeps.changed();
-		this.setSelectedItemIndex( selectedIndex, false );
-	}
+        getItems = function () {
+            itemsDeps.depend();
+            return items;
+        },
 
-	getItems() {
-		this._itemsDeps.depend();
-		return this._items;
-	}
+        getSelectedItem = function () {
+            selectedItemDeps.depend();
+            return items && items[selectedItemIndex] || null;
+        },
 
-	getSelectedItem() {
-		this._selectedItemDeps.depend();
-		return this._items && this._items[ this._selectedItemIndex ] || null;
-	}
+        setSelectedItem = function (item, goToPath = true) {
+            var indexOfSelectedItem = items.indexOf(item);
+            if (indexOfSelectedItem !== -1) {
+                setSelectedItemIndex(indexOfSelectedItem, goToPath);
+            }
+        },
 
-	setSelectedItem( item, goToPath = true ) {
-		var indexOfSelectedItem = this._items.indexOf( item );
-		if( indexOfSelectedItem !== -1 ) {
-			this.setSelectedItemIndex( indexOfSelectedItem, goToPath );
-		}
-	}
+        setSelectedItemIndex = function (index, goToPath) {
+            var path = null;
 
-	setSelectedItemIndex( index, goToPath ) {
-		var path = null;
+            if (index < items.length && index >= 0) {
+                selectedItemIndex = index;
+                selectedItemDeps.changed();
 
-		if( index < this._items.length && index >= 0 ) {
-			this._selectedItemIndex = index;
-			this._selectedItemDeps.changed();
+                if (goToPath) {
+                    path = items[index].getPath();
+                    Router.go(path);
+                }
+            }
+        },
 
-			if( goToPath ) {
-				path = this._items[ index ].getPath();
-				Router.go( path );
-			}
-		}
-	}
+        setCurrentRenderedView = function(view){
+            currentRenderedView = view;
+        },
+        getCurrentRenderedView = function(){
+            return currentRenderedView;
+        },
+
+        publicFunctions = {
+            setSelectedItem, getSelectedItem, getItems, setItems, setCurrentRenderedView, getCurrentRenderedView
+        };
+
+    return publicFunctions;
 }
 
-Template.tabbar.created = function() {
-	var tabbarController = new TabbarController();
-	this._tabbarController = tabbarController;
+Template.tabbar.created = function () {
+    this._tabbarController = tabbarController();
 };
 
-Template.tabbar.rendered = function() {
-	var that = this;
-	this.autorun( function() {
-		var tabbarController = that._tabbarController;
-		tabbarController.setItems( that.data.items() );
-	} );
+Template.tabbar.rendered = function () {
+    var that = this;
+    this.autorun(function () {
+        var tabbarController = that._tabbarController;
+        tabbarController.setItems(that.data.items());
+    });
 
-	this.autorun( function() {
-		var tabbarController = that._tabbarController,
-			selectedItem = tabbarController.getSelectedItem(),
-			template = selectedItem && selectedItem.getTemplate(),
-			targetDom = that.data.target && document.querySelector( that.data.target );
+    this.autorun(function () {
+        var tabbarController = that._tabbarController,
+            selectedItem = tabbarController.getSelectedItem(),
+            template = selectedItem && selectedItem.getTemplate(),
+            targetDom = that.data.target && document.querySelector(that.data.target);
 
-		if( tabbarController._currentRenderedView ) {
-			Blaze.remove( tabbarController._currentRenderedView );
-		}
+        if (tabbarController.getCurrentRenderedView()) {
+            Blaze.remove(tabbarController.getCurrentRenderedView());
+        }
 
-		if( template && targetDom ) {
-			tabbarController._currentRenderedView = Blaze.renderWithData( template, {}, targetDom );
-		}
-	} );
+        if (template && targetDom) {
+            tabbarController.setCurrentRenderedView( Blaze.renderWithData(template, {}, targetDom) );
+        }
+    });
 };
 
-Template.tabbar.helpers( {
+Template.tabbar.helpers({
 
-	tabbarItems: function() {
-		var instance = UI._templateInstance(),
-			controller = instance && instance._tabbarController;
+    tabbarItems: function () {
+        var instance = UI._templateInstance(),
+            controller = instance && instance._tabbarController;
 
-		return controller && controller.getItems() || null;
-	},
+        return controller && controller.getItems() || null;
+    },
 
-	selectedItemTemplate: function() {
-		var instance = UI._templateInstance(),
-			controller = instance && instance._tabbarController,
-			selectedItem = controller && controller.getSelectedItem();
+    selectedItemTemplate: function () {
+        var instance = UI._templateInstance(),
+            controller = instance && instance._tabbarController,
+            selectedItem = controller && controller.getSelectedItem();
 
-		return selectedItem && selectedItem.getTemplate() || null;
-	},
+        return selectedItem && selectedItem.getTemplate() || null;
+    },
 
-	shouldRenderAll: function() {
-		var instance = UI._templateInstance();
-		return instance && instance.data.target === undefined || null
-	}
-} );
+    shouldRenderAll: function () {
+        var instance = UI._templateInstance();
+        return instance && instance.data.target === undefined || null
+    }
+});
 
-Template.tabbar.events( {} );
+Template.tabbar.events({});
 

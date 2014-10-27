@@ -65,14 +65,6 @@ class NavigationItem {
         }
     }
 
-    title(){
-        return this._title.get();
-    }
-
-    setTitle(title){
-        this._title.set(title);
-    }
-
     getPath() {
         return this._path;
     }
