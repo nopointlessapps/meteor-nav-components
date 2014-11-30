@@ -20,6 +20,7 @@ Package.on_use(function (api) {
     ], 'client');
 
     api.add_files([
+        'client/navigation_route_controller.next.js',
         'client/flexbox.styl',
 
         'client/navigation_stack/navigation_item.html',

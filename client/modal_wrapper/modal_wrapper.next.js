@@ -19,12 +19,12 @@ function modalWrapperConstructor (template) {
             return data && data.wrapperId;
         },
         hide = function(){
-            if( !_.isUndefined(domElement()) ){
+            if( !_.isUndefined(domElement()) && !_.isUndefined(domElement().classList) ){
                 domElement().classList.remove('nav-components__modal-wrapper--visible')
             }
         },
         show = function(){
-            if( !_.isUndefined(domElement()) ){
+            if( !_.isUndefined(domElement()) && !_.isUndefined(domElement().classList) ){
                 domElement().classList.add('nav-components__modal-wrapper--visible')
             }
         };

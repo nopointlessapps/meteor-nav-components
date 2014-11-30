@@ -13,10 +13,10 @@ export class NavigationStack {
             this._stackId = template.data.stackId;
             this._className = template.data.className;
             this._canBeClosed = template.data.canBeClosed !== false;
-            this._modalWrapper = template.data.modalWrapper;
+            this._modalWrapper = template.data.modalWrapper && NavComponents.modalWrapperWithId(template.data.modalWrapper);
 
             if (this._modalWrapper) {
-                this._modalWrapper = NavComponents.modalWrapperWithId(this._modalWrapper);
+                this._modalWrapper.setNavigationStack(this);
             }
         }
     }
@@ -126,8 +126,8 @@ export class NavigationStack {
             path = topItem.getPath();
         }
 
-        if (typeof IronLocation !== 'undefined' && path) {
-            IronLocation.pushState({}, "", path, true);
+        if (typeof Iron.Location !== 'undefined' && path) {
+            Iron.Location.go(path, {skipReactivity: true});
         }
     }
 
@@ -148,6 +148,7 @@ export class NavigationStack {
 
         for (t in transitions) {
             if (el.style[t] !== undefined) {
+                console.log(t);
                 return transitions[t];
             }
         }
@@ -187,14 +188,17 @@ export class NavigationStack {
             classToAdd = navigationStack.isPopping && classes.popFrom || classes.pushFrom;
             classToAdd = "navigation-item__animated " + classToAdd;
 
+            console.log('remove element hook');
+
             if (!navigationStack.firstTime) {
+                console.log('is not the first time - should animate');
                 node.addEventListener(transitionEndEvent, function () {
-                    console.log('remove after', transitionEndEvent);
+                    console.log('remove item after transition end event');
                     $(node).remove();
                 });
                 $(node).addClass(classToAdd);
-                console.log(classToAdd)
             } else {
+                console.log('is the first time - should not animate');
                 $(node).remove();
             }
         };
@@ -208,15 +212,19 @@ export class NavigationStack {
             navigationStack = template._navigationStack,
             navigationItem = this.getTopNavigationItem(),
             data = Router.current().data(),
+            currentTopRenderedTemplate = this._topRenderedTemplate,
             itemData = { navigationItem, navigationStack, data };
 
-        if (this._topRenderedTemplate) {
-            Blaze.remove(this._topRenderedTemplate);
+        if (currentTopRenderedTemplate ) {
+            Tracker.afterFlush(function(){
+                Blaze.remove(currentTopRenderedTemplate);
+            })
         }
 
         if (navigationItem) {
             this._topRenderedTemplate = navigationItem.render(itemData, this.getContentDomNode());
         }
+
 
         this.firstTime = false;
 
@@ -241,7 +249,6 @@ export var NavComponents = {
 Template.navigationStack.created = function () {
     this._navigationStack = new NavigationStack(this);
     var stackId = this._navigationStack.stackId();
-    console.log(stackId, "created new instance of navigation stack");
 
     NavComponents.navigationStacks.map[stackId] = this._navigationStack;
     NavComponents.navigationStacks.list.push(this._navigationStack);
@@ -250,7 +257,6 @@ Template.navigationStack.created = function () {
 Template.navigationStack.destroyed = function () {
     var stackId = this._navigationStack.stackId(),
         index = _.indexOf(NavComponents.navigationStacks.list, this._navigationStack);
-    console.log(stackId, "destroyed instance of navigation stack");
 
     delete NavComponents.navigationStacks.map[stackId];
     if (index !== -1) {
@@ -265,7 +271,7 @@ Template.navigationStack.rendered = function () {
         {stackId} = this.data || {};
 
     this.autorun(function () {
-        var navigationStackFn = Router.current().route.navigationStack,
+        var navigationStackFn = Router.current().navigationStack,
             navigationStack = [];
 
         if (typeof navigationStackFn === 'function') {

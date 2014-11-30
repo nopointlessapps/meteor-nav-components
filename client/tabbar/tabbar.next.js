@@ -10,7 +10,7 @@ function tabbarController() {
         setItems = function (newItems = []) {
             var selectedIndex = 0,
                 fixPath = function (path) {
-                    if (path[path.length] !== "/") {
+                    if (path && path[path.length] !== "/") {
                         path = path + "/";
                     }
                     return path;
@@ -26,7 +26,7 @@ function tabbarController() {
                     routerPath = fixPath(routerPath);
 
                     item.setTabbarController(publicFunctions);
-                    if (routerPath.startsWith(path)) {
+                    if (routerPath && path && routerPath.startsWith(path)) {
                         selectedIndex = index;
                     }
                 }
@@ -34,6 +34,7 @@ function tabbarController() {
 
             itemsDeps.changed();
             setSelectedItemIndex(selectedIndex, false);
+
         },
 
         getItems = function () {
@@ -62,15 +63,16 @@ function tabbarController() {
 
                 if (goToPath) {
                     path = items[index].getPath();
+
                     Router.go(path);
                 }
             }
         },
 
-        setCurrentRenderedView = function(view){
+        setCurrentRenderedView = function (view) {
             currentRenderedView = view;
         },
-        getCurrentRenderedView = function(){
+        getCurrentRenderedView = function () {
             return currentRenderedView;
         },
 
@@ -87,9 +89,10 @@ Template.tabbar.created = function () {
 
 Template.tabbar.rendered = function () {
     var that = this;
-    this.autorun(function () {
+    this.autorun(function (c) {
         var tabbarController = that._tabbarController;
         tabbarController.setItems(that.data.items());
+        c.stop();
     });
 
     this.autorun(function () {
@@ -103,22 +106,40 @@ Template.tabbar.rendered = function () {
         }
 
         if (template && targetDom) {
-            tabbarController.setCurrentRenderedView( Blaze.renderWithData(template, {}, targetDom) );
+            tabbarController.setCurrentRenderedView(Blaze.renderWithData(template, {}, targetDom));
         }
+    });
+
+    this.autorun(function (c) {
+       if( Router ){
+           if( Router.current().ready() ){
+               var path = Iron.Location.get().path;
+               if( path.substr(path.length-1) !== "/"){
+                   path = path+"/";
+               }
+               _.forEach(that._tabbarController.getItems(), function(item){
+                    if(path.indexOf(item.getPath()+"/") === 0 && that._tabbarController.getSelectedItem() !== item){
+                        that._tabbarController.setSelectedItem(item);
+                    }
+               });
+           }
+       }  else {
+           c.stop();
+       }
     });
 };
 
 Template.tabbar.helpers({
 
     tabbarItems: function () {
-        var instance = UI._templateInstance(),
+        var instance = Template.instance(),
             controller = instance && instance._tabbarController;
 
         return controller && controller.getItems() || null;
     },
 
     selectedItemTemplate: function () {
-        var instance = UI._templateInstance(),
+        var instance = Template.instance(),
             controller = instance && instance._tabbarController,
             selectedItem = controller && controller.getSelectedItem();
 
@@ -126,7 +147,7 @@ Template.tabbar.helpers({
     },
 
     shouldRenderAll: function () {
-        var instance = UI._templateInstance();
+        var instance = Template.instance();
         return instance && instance.data.target === undefined || null
     }
 });

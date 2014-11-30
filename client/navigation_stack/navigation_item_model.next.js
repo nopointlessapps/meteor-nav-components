@@ -1,4 +1,4 @@
-class NavigationItem {
+export class NavigationItem {
 
     constructor(options = {}) {
 
@@ -17,6 +17,10 @@ class NavigationItem {
             console.log("NavigationItem requires a path");
         }
 
+        if (this._template === undefined || this._template === null) {
+            console.log("NavigationItem requires a template");
+        }
+
         this._checkIfReady();
     }
 
@@ -26,8 +30,6 @@ class NavigationItem {
         Tracker.autorun(function (c) {
             var waitOn = that._waitOn,
                 isReady = true;
-
-            console.log(waitOn);
 
             if (_.isArray(waitOn)) {
                 _.forEach(waitOn, function (item) {
@@ -182,4 +184,4 @@ NavigationItem.instance = function(){
     return instance;
 }
 
-export var NavigationItem;
+//export var NavigationItem;

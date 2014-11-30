@@ -1,4 +1,4 @@
-class TabbarItem {
+export class TabbarItem {
   constructor(name, icon, itemTemplate, contentTemplate, routeName, routeParams){
     this._name = name;
     this._template = contentTemplate;
@@ -86,4 +86,4 @@ Template.tabbarItem.events({
 });
 
 
-export var TabbarItem;
+//export var TabbarItem;

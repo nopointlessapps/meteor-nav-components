@@ -16,7 +16,7 @@
         {{> selectedItemTemplate}}
     </div>
     <nav class="tabbar__items {{class}}">
-        <ul class="tabbar__items-container">
+        <ul class="tabbar__items-container {{class}}">
             {{#each tabbarItems}}
             {{> tabbarItem tabbarItem=this}}
             {{/each}}
