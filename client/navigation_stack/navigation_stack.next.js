@@ -284,7 +284,7 @@ Template.navigationStack.rendered = function () {
                 that._navigationStack.setStack(renderStack, firstTime);
                 that._navigationStack.renderStack();
 
-                that.firstNode._uihooks = that._navigationStack.getAnimationHooks();
+                //that.firstNode._uihooks = that._navigationStack.getAnimationHooks();
 
                 firstTime = false;
 
